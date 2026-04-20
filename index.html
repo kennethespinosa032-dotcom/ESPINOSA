@@ -1,68 +1,229 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Name | Portfolio</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Professional Portfolio</title>
+    <style>
+        /* CSS Variables for easy color management */
+        :root {
+            --bg-dark: #0a0a0a;
+            --card-bg: #161616;
+            --primary-green: #2ecc71;
+            --accent-green: #27ae60;
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
+            --border-glow: rgba(46, 204, 113, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Main Container */
+        .portfolio-container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px var(--border-glow);
+        }
+
+        /* Header Section */
+        header {
+            padding: 40px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            background: linear-gradient(180deg, #1a1a1a 0%, var(--card-bg) 100%);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+        }
+
+        header span {
+            color: var(--primary-green);
+        }
+
+        header p {
+            color: var(--text-dim);
+            margin-top: 10px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Navigation Bars */
+        nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .nav-bar {
+            background: #222;
+            padding: 15px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .nav-bar:hover {
+            background: #2a2a2a;
+            border-left: 4px solid var(--primary-green);
+            transform: translateX(5px);
+        }
+
+        .nav-bar.active {
+            background: #2a2a2a;
+            border-left: 4px solid var(--primary-green);
+            color: var(--primary-green);
+        }
+
+        /* Content Area */
+        .content-section {
+            display: none; /* Hidden by default */
+            padding: 30px;
+            background: #111;
+            border-top: 1px solid #333;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-section h2 {
+            color: var(--primary-green);
+            margin-bottom: 15px;
+        }
+
+        .content-section p {
+            line-height: 1.6;
+            color: var(--text-dim);
+        }
+
+        /* Grid for Skills/Certificates */
+        .grid-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .grid-item {
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+    </style>
 </head>
-<body> 
+<body>
 
-<header>
+<div class="portfolio-container">
+    <header>
+        <h1>HI, I'M <span>CREATIVE</span></h1>
+        <p>Developer & UI Enthusiast</p>
+    </header>
+
     <nav>
-        <h1>YourName</h1>
-        <ul>
-            <li><a href="#about">About</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
+        <div class="nav-bar" onclick="toggleSection('about')">
+            <span>ABOUT ME</span>
+            <span>+</span>
+        </div>
+        <div id="about" class="content-section">
+            <h2>Personal Profile</h2>
+            <p>I am a passionate developer focused on creating clean, interactive, and user-friendly digital experiences. I enjoy turning complex problems into simple, beautiful, and intuitive designs.</p>
+        </div>
+
+        <div class="nav-bar" onclick="toggleSection('skills')">
+            <span>MY SKILLS</span>
+            <span>+</span>
+        </div>
+        <div id="skills" class="content-section">
+            <h2>Technical Expertise</h2>
+            <div class="grid-list">
+                <div class="grid-item">HTML5 / CSS3</div>
+                <div class="grid-item">JavaScript (ES6+)</div>
+                <div class="grid-item">UI/UX Design</div>
+                <div class="grid-item">Responsive Layouts</div>
+                <div class="grid-item">Version Control (Git)</div>
+                <div class="grid-item">Tailwind CSS</div>
+            </div>
+        </div>
+
+        <div class="nav-bar" onclick="toggleSection('certs')">
+            <span>CERTIFICATES</span>
+            <span>+</span>
+        </div>
+        <div id="certs" class="content-section">
+            <h2>Achievements</h2>
+            <div class="grid-list">
+                <div class="grid-item">Google UX Design Cert</div>
+                <div class="grid-item">Frontend Specialization</div>
+                <div class="grid-item">Meta Web Developer</div>
+                <div class="grid-item">Advanced CSS Mastery</div>
+            </div>
+        </div>
     </nav>
-</header>
+</div>
 
-<section class="hero">
-    <div class="hero-text">
-        <h2>Hello, I'm <span>Your Name</span></h2>
-        <p>A passionate developer building modern web experiences.</p>
-        <a href="#projects" class="btn">View My Work</a>
-    </div>
-</section>
+<script>
+    function toggleSection(sectionId) {
+        // Get all sections
+        const sections = document.querySelectorAll('.content-section');
+        const bars = document.querySelectorAll('.nav-bar');
+        
+        // Target section
+        const target = document.getElementById(sectionId);
+        const currentBar = target.previousElementSibling;
 
-<section id="about">
-    <h2>About Me</h2>
-    <p>
-        I am a developer specializing in front-end and back-end technologies.
-        I enjoy building clean, user-friendly applications.
-    </p>
-</section>
+        // If the section is already open, close it
+        if (target.style.display === "block") {
+            target.style.display = "none";
+            currentBar.classList.remove('active');
+            currentBar.querySelector('span:last-child').innerText = "+";
+        } else {
+            // Close all sections first for a clean look
+            sections.forEach(sec => sec.style.display = "none");
+            bars.forEach(bar => {
+                bar.classList.remove('active');
+                bar.querySelector('span:last-child').innerText = "+";
+            });
 
-<section id="projects">
-    <h2>Projects</h2>
+            // Open the clicked one
+            target.style.display = "block";
+            currentBar.classList.add('active');
+            currentBar.querySelector('span:last-child').innerText = "-";
+        }
+    }
+</script>
 
-    <div class="project-card">
-        <h3>Project One</h3>
-        <p>Short description of your project.</p>
-        <a href="#">View on GitHub</a>
-    </div>
-
-    <div class="project-card">
-        <h3>Project Two</h3>
-        <p>Short description of your project.</p>
-        <a href="#">View on GitHub</a>
-    </div>
-
-</section>
-
-<section id="contact">
-    <h2>Contact</h2>
-    <p>Email: your@email.com</p>
-    <p>GitHub: github.com/yourusername</p>
-</section>
-
-<footer>
-    <p>© 2026 Your Name</p>
-</footer>
-
-<script src="script.js"></script>
 </body>
 </html>

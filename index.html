@@ -46,7 +46,6 @@
       max-width: 900px;
       margin: 40px auto;
       padding: 30px;
-      /* Glass effect */
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -80,6 +79,7 @@
 
     .image-gallery img, video {
       width: 100%;
+      max-width: 100%;
       border-radius: 12px;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
@@ -94,6 +94,7 @@
       border-radius: 15px;
       border: none;
       margin: 10px;
+      max-width: 100%;
     }
 
     .center { text-align: center; }
@@ -106,6 +107,7 @@
       border-radius: 8px;
       border: none;
       background: rgba(255,255,255,0.9);
+      box-sizing: border-box;
     }
 
     .btn-submit {
@@ -196,6 +198,7 @@
       border: none;
       padding: 10px;
       border-radius: 0;
+      margin: 0;
     }
 
     /* --- ANIMATIONS --- */
@@ -242,15 +245,15 @@
       <h2>Featured Videos</h2>
       <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
         <figure>
-          <video src="s.mp4" width="280" controls></video>
+          <video src="s.mp4" width="280" controls playsinline></video>
           <figcaption>Blue Stallions</figcaption>
         </figure>
         <figure>
-          <video src="p.mp4" width="280" controls></video>
+          <video src="p.mp4" width="280" controls playsinline></video>
           <figcaption>Indigenous Communities Performance</figcaption>
         </figure>
         <figure>
-          <video src="c.mp4" width="280" controls></video>
+          <video src="c.mp4" width="280" controls playsinline></video>
           <figcaption>Chorale Performance</figcaption>
         </figure>
       </div>
@@ -308,7 +311,6 @@
   </footer>
 
   <script>
-    // CHATBOT LOGIC
     const chatCircle = document.getElementById('chat-circle');
     const chatBox = document.getElementById('chat-box');
     const chatClose = document.getElementById('chat-close');
@@ -333,11 +335,11 @@
         addMessage(val, 'user');
         chatInput.value = '';
         
-        // Simple Bot Responses
         setTimeout(() => {
-            if(val.toLowerCase().includes('hello') || val.toLowerCase().includes('hi')){
+            const lowerVal = val.toLowerCase();
+            if(lowerVal.includes('hello') || lowerVal.includes('hi')){
                 addMessage("Hello! Kenneth is currently busy studying at CPSU, but you can leave a message here!", 'bot');
-            } else if(val.toLowerCase().includes('skills')){
+            } else if(lowerVal.includes('skills')){
                 addMessage("Kenneth is skilled in Figma design, IT fundamentals, and performance arts!", 'bot');
             } else {
                 addMessage("That's interesting! Feel free to reach out to Kenneth via the contact form above.", 'bot');
@@ -345,7 +347,6 @@
         }, 1000);
     };
 
-    // Allow "Enter" key to send message
     chatInput.addEventListener("keypress", (event) => {
       if (event.key === "Enter") {
         chatSend.click();

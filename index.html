@@ -2,191 +2,356 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kenneth Espinosa | Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
   <style>
+    /* --- 1. ANIMATED BACKGROUND --- */
     body {
-      font-family: 'New Romans', serif;
-      background: linear-gradient(to bottom right, #2D8D6D, #FFEBCD);
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
       color: #ffffff;
-      margin: 5;
-      padding: 10;
+      background: linear-gradient(-45deg, #2D8D6D, #1a5e48, #FFEBCD, #d4a373);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* --- 2. LAYOUT & GLASSMORPHISM --- */
     header {
-      background-color: #2D8D6D;
       text-align: center;
-      padding: 20px;
+      padding: 60px 20px;
+      animation: fadeInDown 1s ease-out;
     }
 
     header h1 {
       margin: 0;
-      font-weight: 1000;
-      font-size: 36px;
+      font-size: 4rem;
+      font-weight: 800;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      text-shadow: 2px 4px 10px rgba(0,0,0,0.3);
     }
 
     section {
-      max-width: 500px;
-      margin: 20px auto;
-      padding: 10px;
-      background-color: #fffff;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 30px;
+      /* Glass effect */
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      animation: fadeInUp 1s ease-out;
     }
 
-    section h2 {
+    h2 {
       text-align: center;
-      font-size: 24px;
-      margin-bottom: 15px;
-      color: 333;
+      font-size: 28px;
+      border-bottom: 2px solid #FFEBCD;
+      display: inline-block;
+      width: 100%;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
     }
 
     p {
-      font-size: 16px;
-      text-align: justify;
-      line-height: 1.5;
+      line-height: 1.8;
+      font-size: 1.1rem;
     }
 
-    figure {
-      display: inline-block;
-      text-align: center;
-      margin: 15px;
-    }
-
-    figure iframe {
-      border-radius: 10px;
-      box-shadow: 0 0 6px rgba(0,0,0,0.2);
-    }
-
-    figcaption {
-      margin-top: 5px;
-      font-size: 16px;
-    }
-
+    /* --- 3. GALLERY & MEDIA --- */
     .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      justify-items: center;
+    }
+
+    .image-gallery img, video {
+      width: 100%;
+      border-radius: 12px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .image-gallery img:hover, video:hover, iframe:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+
+    iframe {
+      border-radius: 15px;
+      border: none;
+      margin: 10px;
+    }
+
+    .center { text-align: center; }
+
+    /* --- 4. FORM & BUTTONS --- */
+    textarea, input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255,255,255,0.9);
+    }
+
+    .btn-submit {
+      display: inline-block;
+      padding: 12px 30px;
+      background: #FFEBCD;
+      color: #2D8D6D;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 50px;
+      transition: 0.3s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-submit:hover {
+      background: #2D8D6D;
+      color: #fff;
+      transform: translateY(-3px);
+    }
+
+    /* --- 5. CHATBOT UI --- */
+    #chat-circle {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: #2D8D6D;
+      border-radius: 50%;
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      z-index: 1000;
     }
 
-    .image-gallery img {
-      
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      box-shadow: 0 0 6px rgba(0,0,0,0.2);
+    .chat-box {
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      width: 300px;
+      height: 400px;
+      background: white;
+      border-radius: 15px;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      z-index: 1000;
+      color: #333;
+      overflow: hidden;
     }
 
-    .center {
-      text-align: center;
+    .chat-header {
+      background: #2D8D6D;
+      color: white;
+      padding: 15px;
+      font-weight: bold;
+    }
+
+    #chat-logs {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-msg {
+      padding: 8px 12px;
+      border-radius: 10px;
+      max-width: 80%;
+      font-size: 14px;
+    }
+
+    .bot-msg { background: #eee; align-self: flex-start; }
+    .user-msg { background: #2D8D6D; color: white; align-self: flex-end; }
+
+    .chat-input-area {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      border: none;
+      padding: 10px;
+      border-radius: 0;
+    }
+
+    /* --- ANIMATIONS --- */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     footer {
       text-align: center;
-      padding: 30px;
-      background-color: #fffff;
-      font-size: 18px;
-      color: #333;
-      margin-top: 30px;
+      padding: 40px;
+      font-size: 0.9rem;
+      opacity: 0.8;
     }
 
-    a {
-      color: #4CB5F5;
-      text-decoration: none;
-    }
-
-    a:hover {
-      color: #4CB5F5;
-      text-decoration: underline;
-    }
-
+    a { color: #FFEBCD; text-decoration: none; font-weight: bold; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>PORTFOLIO</h1>
+    <h1>KENNETH ESPINOSA</h1>
+    <p>BSIT Student | Creative Developer</p>
   </header>
 
   <section id="profile">
     <h2>About Me</h2>
-    <p>This is Kenneth Espinosa, 20 years old, from the home of Bailes De Luces — La Castellana, Negros Occidental. I'm excited to connect and explore opportunities.
-      I am BSIT student of Central Philippine State University.
-    </p>
+    <p>I'm a 20-year-old BSIT student from <strong>La Castellana, Negros Occidental</strong>—the home of Bailes De Luces. I study at Central Philippine State University and I'm passionate about building digital experiences.</p>
 
     <div class="center">
       <h2>My Gallery</h2>
       <div class="image-gallery">
+          <img src="a.jpg" alt="Kenneth Photo 1">
+          <img src="k.jpg" alt="Kenneth Photo 2">
+          <img src="q.jpg" alt="Kenneth Photo 3">
+      </div>
+    </div>
+
+    <div class="center">
+      <h2>Featured Videos</h2>
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
         <figure>
-          <img src="a.jpg" alt="Kenneth">
-          <a href="a.jpg"</a>
-          <img src="k.jpg" alt="Kenneth">
-          <a href="k.jpg"</a>
-          <img src="q.jpg" alt="Kenneth">
-          <a href="q.jpg"</a>
+          <video src="s.mp4" width="280" controls></video>
+          <figcaption>Blue Stallions</figcaption>
+        </figure>
+        <figure>
+          <video src="p.mp4" width="280" controls></video>
+          <figcaption>Indigenous Communities Performance</figcaption>
+        </figure>
+        <figure>
+          <video src="c.mp4" width="280" controls></video>
+          <figcaption>Chorale Performance</figcaption>
         </figure>
       </div>
     </div>
 
     <div class="center">
-      <h2>My Video</h2>
-      <figure>
-      <video src="s.mp4" width="320" height="240" controls></video>
-      <a href="s.mp4">s.mp</a>
-      <figcaption>Blue Stallions</figcaption>
-      </figure>
-      <figure>
-      <video src="p.mp4" width="320" height="240" controls></video>
-        <a href="p.mp4">p.mp4</a>
-        <figcaption>Performance in Philippine Indigenous Communities</figcaption>
-      </figure>   
-      <figure>
-      <video src="c.mp4" width="320" height="240" controls></video>       
-        <a href="c.mp4">c.mp4</a>
-        <figcaption>Chorale Performance</figcaption>
-      </figure>   
+      <h2>My Music Videos</h2>
+      <div style="display: flex; flex-wrap: wrap; justify-content: center;">
+        <iframe width="280" height="180" src="https://www.youtube.com/embed/-sNgBet587k" title="Janice" allowfullscreen></iframe>
+        <iframe width="280" height="180" src="https://www.youtube.com/embed/JS1VzEHgFYc" title="Ano Ba Talaga Tayo" allowfullscreen></iframe>
+        <iframe width="280" height="180" src="https://www.youtube.com/embed/jb-U6YSpKuM" title="Multo" allowfullscreen></iframe>
       </div>
+    </div>
 
     <div class="center">
-      <h2>My Music Videos</h2>
-      <figure>
-        <iframe width="300" height="200" src="https://youtu.be/-sNgBet587k?si=hEfitaFCBlBHJeKs" title="Ikaw At Ako by Johnoy Danao" allowfullscreen></iframe>
-        <figcaption>“Janice” By Dilaw</figcaption>
-      </figure>
-      <figure>
-        <iframe width="300" height="200" src="https://youtu.be/JS1VzEHgFYc?si=bJhcbrHIXgVwyGaF" title="Ano Ba Talaga Tayo" allowfullscreen></iframe>
-        <figcaption>“Ano Ba Talaga Tayo” by The Juans</figcaption>
-      </figure>
-      <figure>
-        <iframe width="300" height="200" src="https://www.youtube.com/embed/jb-U6YSpKuM" title="Multo by Cup of Joe" allowfullscreen></iframe>
-        <figcaption>“Multo” by Cup of Joe</figcaption>
-      </figure>
-    </div >
-    <div class="Center">
-      <h2>My Activities</h2>
-        <p>Figma Portfolio: <a href="https://www.figma.com/proto/3sQFzMbCY9e5Qn8obDBfip/my-portfolio.Kenneth?node-id=1-13&t=5pWrJln6y7I6wQ7P-1&fbclid=IwY2xjawNdFWtleHRuA2FlbQIxMQABHtYyYquJGA3u92m8j_8FZFa98EWCozc0i9rAHGhYdZRVAVMqDie_2C1MU3sP_aem__zGI1gN0GhLMzCD6tdkT3w">My Portfolio</a></p>
-          <div class="Center">
-        <p>Figma E-commerce: <a href="https://www.figma.com/proto/xQaAgGw9F1WD87YAc7Csua/Untitled?node-id=1-9&starting-point-node-id=1%3A9&t=ndbetmmiLNhVwU0n-1&fbclid=IwY2xjawNdFshleHRuA2FlbQIxMQABHstzOI9kDC9HYGIkmUGZbiimY0TGbkDwbQHyFIpB11ocHtFYVJNLzVwyy17K_aem_pF0QZh9u-us03d94NYS7IQ">My E-commerce</a></p>
-      
-      <div class="Center">
-      <h2>My Skills</h2>
-         
+      <h2>Projects & Skills</h2>
+      <p>🚀 <a href="https://www.figma.com/proto/3sQFzMbCY9e5Qn8obDBfip/my-portfolio.Kenneth" target="_blank">Figma Portfolio Design</a></p>
+      <p>🛒 <a href="https://www.figma.com/proto/xQaAgGw9F1WD87YAc7Csua/Untitled" target="_blank">E-commerce UI Prototype</a></p>
+    </div>
+
+    <div class="center">
       <h2>Contact Me</h2>
-        <center></center>
-      <p>Email: <a href="kennethespinosa032@gmail.com">kennethespinosa032@gmail.com</a></p>
-      <p>Facebook: <a href="https://www.facebook.com/share/1KAGgG8Fna/">Kenneth Ortega Espinosa</a>
-      <p>Phone: 0916-544-5201</p>
+      <p>📧 <a href="mailto:kennethespinosa032@gmail.com">kennethespinosa032@gmail.com</a></p>
+      <p>📞 0916-544-5201</p>
+      
+      <div style="margin-top: 20px; text-align: left;">
+          <label>Full Name:</label>
+          <input type="text" placeholder="Your Name">
+          <label>Message:</label>
+          <textarea rows="4" placeholder="Write your message here..."></textarea>
+          <div class="center">
+            <a href="https://m.me/kenneth.espinosa.376" class="btn-submit">Send via Messenger</a>
+          </div>
       </div>
-      <label for="Fullname">Full Name:</label><br>
-      <Textarea id="Fullname" name="Fullname" rows="1" cols="20"></Textarea><br>
-      <label for="comments">Message:</label><br>
-      <Textarea id="comments" name="comments" rows="3" cols="40" placeholder="Right Your Message Here..."></Textarea>
-      <button type="submit"</button>
-            <a href="https://m.me/kenneth.espinosa.376">submit</a>
-      </section>
+    </div>
+  </section>
+
+  <div id="chat-circle">
+    <span style="font-size: 24px;">💬</span>
+  </div>
+
+  <div class="chat-box" id="chat-box">
+    <div class="chat-header">Kenneth's Bot <span id="chat-close" style="float:right; cursor:pointer;">×</span></div>
+    <div id="chat-logs">
+        <div class="chat-msg bot-msg">Hi there! I'm Kenneth's virtual assistant. How can I help you today?</div>
+    </div>
+    <div class="chat-input-area">
+        <input type="text" id="chat-input" placeholder="Type a message...">
+        <button id="chat-send" style="padding:10px; background:#2D8D6D; color:white; border:none; cursor:pointer;">Send</button>
+    </div>
+  </div>
 
   <footer>
-    <p>&copy; 2025 Kenneth's Portfolio</p>
+    <p>&copy; 2025 Kenneth's Portfolio | Designed with Passion</p>
   </footer>
 
+  <script>
+    // CHATBOT LOGIC
+    const chatCircle = document.getElementById('chat-circle');
+    const chatBox = document.getElementById('chat-box');
+    const chatClose = document.getElementById('chat-close');
+    const chatInput = document.getElementById('chat-input');
+    const chatSend = document.getElementById('chat-send');
+    const chatLogs = document.getElementById('chat-logs');
+
+    chatCircle.onclick = () => chatBox.style.display = 'flex';
+    chatClose.onclick = () => chatBox.style.display = 'none';
+
+    function addMessage(text, type) {
+        const msg = document.createElement('div');
+        msg.className = `chat-msg ${type}-msg`;
+        msg.innerText = text;
+        chatLogs.appendChild(msg);
+        chatLogs.scrollTop = chatLogs.scrollHeight;
+    }
+
+    chatSend.onclick = () => {
+        const val = chatInput.value;
+        if(!val) return;
+        addMessage(val, 'user');
+        chatInput.value = '';
+        
+        // Simple Bot Responses
+        setTimeout(() => {
+            if(val.toLowerCase().includes('hello') || val.toLowerCase().includes('hi')){
+                addMessage("Hello! Kenneth is currently busy studying at CPSU, but you can leave a message here!", 'bot');
+            } else if(val.toLowerCase().includes('skills')){
+                addMessage("Kenneth is skilled in Figma design, IT fundamentals, and performance arts!", 'bot');
+            } else {
+                addMessage("That's interesting! Feel free to reach out to Kenneth via the contact form above.", 'bot');
+            }
+        }, 1000);
+    };
+
+    // Allow "Enter" key to send message
+    chatInput.addEventListener("keypress", (event) => {
+      if (event.key === "Enter") {
+        chatSend.click();
+      }
+    });
+  </script>
+
 </body>
-  </html>
+</html>

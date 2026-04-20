@@ -69,20 +69,39 @@
       font-size: 1.1rem;
     }
 
-    /* --- 3. GALLERY & MEDIA --- */
+    /* --- 3. GALLERY & MEDIA FIXES --- */
     .image-gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
       justify-items: center;
+      margin-top: 20px;
     }
 
-    .image-gallery img, video {
+    .image-gallery img {
       width: 100%;
-      max-width: 100%;
+      max-width: 300px; /* Prevents single images from becoming huge */
+      height: auto;
       border-radius: 12px;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      display: block;
+    }
+
+    /* Video Container Styling */
+    .video-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    video {
+      border-radius: 12px;
+      background-color: #000; /* Shows black box if video fails to load */
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease;
     }
 
     .image-gallery img:hover, video:hover, iframe:hover {
@@ -94,7 +113,17 @@
       border-radius: 15px;
       border: none;
       margin: 10px;
-      max-width: 100%;
+    }
+
+    figure {
+      margin: 0;
+      text-align: center;
+    }
+
+    figcaption {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
     }
 
     .center { text-align: center; }
@@ -241,17 +270,26 @@
 
     <div class="center">
       <h2>Featured Videos</h2>
-      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+      <div class="video-container">
         <figure>
-          <video src="s.mp4" width="280" controls playsinline></video>
+          <video width="280" controls>
+            <source src="s.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
           <figcaption>Blue Stallions</figcaption>
         </figure>
         <figure>
-          <video src="p.mp4" width="280" controls playsinline></video>
+          <video width="280" controls>
+            <source src="p.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
           <figcaption>Indigenous Communities Performance</figcaption>
         </figure>
         <figure>
-          <video src="c.mp4" width="280" controls playsinline></video>
+          <video width="280" controls>
+            <source src="c.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
           <figcaption>Chorale Performance</figcaption>
         </figure>
       </div>
@@ -339,7 +377,7 @@
                 addMessage("Hello! Kenneth is currently busy studying at CPSU, but you can leave a message here!", 'bot');
             } else if(lowerVal.includes('skills')){
                 addMessage("Kenneth is skilled in Figma design, IT fundamentals, and performance arts!", 'bot');
-            } else {
+           } else {
                 addMessage("That's interesting! Feel free to reach out to Kenneth via the contact form above.", 'bot');
             }
         }, 1000);

@@ -1,11 +1,192 @@
-<!-- wp:image {"id":7,"sizeSlug":"large","linkDestination":"none","align":"center","className":"is-style-rounded"} -->
-<figure class="wp-block-image aligncenter size-large is-style-rounded"><img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/image_editor_output_image-1558688977-17766897249307269943746053520595.jpg?w=552" alt="" class="wp-image-7"/></figure>
-<!-- /wp:image -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Portfolio</title>
+  <style>
+    body {
+      font-family: 'New Romans', serif;
+      background: linear-gradient(to bottom right, #2D8D6D, #FFEBCD);
+      color: #ffffff;
+      margin: 5;
+      padding: 10;
+    }
 
-<!-- wp:heading {"textAlign":"center","level":1,"className":"margin-bottom-half"} -->
-<h1 class="wp-block-heading has-text-align-center margin-bottom-half">Kenneth Espinosa</h1>
-<!-- /wp:heading -->
+    header {
+      background-color: #2D8D6D;
+      text-align: center;
+      padding: 20px;
+    }
 
-<!-- wp:paragraph {"align":"center","style":{"typography":{"fontSize":18}}} -->
-<p class="has-text-align-center" style="font-size:18px">This is Kenneth Espinosa, 20 years old, from the home of Bailes De Luces — La Castellana, Negros Occidental. I'm excited to connect and explore opportunities.<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I am BSIT student of Central Philippine State University.</p>
-<!-- /wp:paragraph -->
+    header h1 {
+      margin: 0;
+      font-weight: 1000;
+      font-size: 36px;
+    }
+
+    section {
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 10px;
+      background-color: #fffff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    section h2 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: 333;
+    }
+
+    p {
+      font-size: 16px;
+      text-align: justify;
+      line-height: 1.5;
+    }
+
+    figure {
+      display: inline-block;
+      text-align: center;
+      margin: 15px;
+    }
+
+    figure iframe {
+      border-radius: 10px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.2);
+    }
+
+    figcaption {
+      margin-top: 5px;
+      font-size: 16px;
+    }
+
+    .image-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .image-gallery img {
+      
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      box-shadow: 0 0 6px rgba(0,0,0,0.2);
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      background-color: #fffff;
+      font-size: 18px;
+      color: #333;
+      margin-top: 30px;
+    }
+
+    a {
+      color: #4CB5F5;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: #4CB5F5;
+      text-decoration: underline;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>PORTFOLIO</h1>
+  </header>
+
+  <section id="profile">
+    <h2>About Me</h2>
+    <p>This is Kenneth Espinosa, 20 years old, from the home of Bailes De Luces — La Castellana, Negros Occidental. I'm excited to connect and explore opportunities.
+      I am BSIT student of Central Philippine State University.
+    </p>
+
+    <div class="center">
+      <h2>My Gallery</h2>
+      <div class="image-gallery">
+        <figure>
+          <img src="a.jpg" alt="Kenneth">
+          <a href="a.jpg"</a>
+          <img src="k.jpg" alt="Kenneth">
+          <a href="k.jpg"</a>
+          <img src="q.jpg" alt="Kenneth">
+          <a href="q.jpg"</a>
+        </figure>
+      </div>
+    </div>
+
+    <div class="center">
+      <h2>My Video</h2>
+      <figure>
+      <video src="s.mp4" width="320" height="240" controls></video>
+      <a href="s.mp4">s.mp</a>
+      <figcaption>Blue Stallions</figcaption>
+      </figure>
+      <figure>
+      <video src="p.mp4" width="320" height="240" controls></video>
+        <a href="p.mp4">p.mp4</a>
+        <figcaption>Performance in Philippine Indigenous Communities</figcaption>
+      </figure>   
+      <figure>
+      <video src="c.mp4" width="320" height="240" controls></video>       
+        <a href="c.mp4">c.mp4</a>
+        <figcaption>Chorale Performance</figcaption>
+      </figure>   
+      </div>
+
+    <div class="center">
+      <h2>My Music Videos</h2>
+      <figure>
+        <iframe width="300" height="200" src="https://youtu.be/-sNgBet587k?si=hEfitaFCBlBHJeKs" title="Ikaw At Ako by Johnoy Danao" allowfullscreen></iframe>
+        <figcaption>“Janice” By Dilaw</figcaption>
+      </figure>
+      <figure>
+        <iframe width="300" height="200" src="https://youtu.be/JS1VzEHgFYc?si=bJhcbrHIXgVwyGaF" title="Ano Ba Talaga Tayo" allowfullscreen></iframe>
+        <figcaption>“Ano Ba Talaga Tayo” by The Juans</figcaption>
+      </figure>
+      <figure>
+        <iframe width="300" height="200" src="https://www.youtube.com/embed/jb-U6YSpKuM" title="Multo by Cup of Joe" allowfullscreen></iframe>
+        <figcaption>“Multo” by Cup of Joe</figcaption>
+      </figure>
+    </div >
+    <div class="Center">
+      <h2>My Activities</h2>
+        <p>Figma Portfolio: <a href="https://www.figma.com/proto/3sQFzMbCY9e5Qn8obDBfip/my-portfolio.Kenneth?node-id=1-13&t=5pWrJln6y7I6wQ7P-1&fbclid=IwY2xjawNdFWtleHRuA2FlbQIxMQABHtYyYquJGA3u92m8j_8FZFa98EWCozc0i9rAHGhYdZRVAVMqDie_2C1MU3sP_aem__zGI1gN0GhLMzCD6tdkT3w">My Portfolio</a></p>
+          <div class="Center">
+        <p>Figma E-commerce: <a href="https://www.figma.com/proto/xQaAgGw9F1WD87YAc7Csua/Untitled?node-id=1-9&starting-point-node-id=1%3A9&t=ndbetmmiLNhVwU0n-1&fbclid=IwY2xjawNdFshleHRuA2FlbQIxMQABHstzOI9kDC9HYGIkmUGZbiimY0TGbkDwbQHyFIpB11ocHtFYVJNLzVwyy17K_aem_pF0QZh9u-us03d94NYS7IQ">My E-commerce</a></p>
+      
+      <div class="Center">
+      <h2>My Skills</h2>
+         
+      <h2>Contact Me</h2>
+        <center></center>
+      <p>Email: <a href="kennethespinosa032@gmail.com">kennethespinosa032@gmail.com</a></p>
+      <p>Facebook: <a href="https://www.facebook.com/share/1KAGgG8Fna/">Kenneth Ortega Espinosa</a>
+      <p>Phone: 0916-544-5201</p>
+      </div>
+      <label for="Fullname">Full Name:</label><br>
+      <Textarea id="Fullname" name="Fullname" rows="1" cols="20"></Textarea><br>
+      <label for="comments">Message:</label><br>
+      <Textarea id="comments" name="comments" rows="3" cols="40" placeholder="Right Your Message Here..."></Textarea>
+      <button type="submit"</button>
+            <a href="https://m.me/kenneth.espinosa.376">submit</a>
+      </section>
+
+  <footer>
+    <p>&copy; 2025 Kenneth's Portfolio</p>
+  </footer>
+
+</body>
+  </html>

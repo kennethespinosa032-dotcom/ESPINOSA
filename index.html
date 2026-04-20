@@ -1,229 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Portfolio</title>
-    <style>
-        /* CSS Variables for easy color management */
-        :root {
-            --bg-dark: #0a0a0a;
-            --card-bg: #161616;
-            --primary-green: #2ecc71;
-            --accent-green: #27ae60;
-            --text-main: #ffffff;
-            --text-dim: #a0a0a0;
-            --border-glow: rgba(46, 204, 113, 0.2);
-        }
+  <meta charset="UTF-8">
+  <title>Portfolio</title>
+  <style>
+    body {
+      font-family: 'New Romans', serif;
+      background: linear-gradient(to bottom right, #2D8D6D, #FFEBCD);
+      color: #ffffff;
+      margin: 5;
+      padding: 10;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    header {
+      background-color: #2D8D6D;
+      text-align: center;
+      padding: 20px;
+    }
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+    header h1 {
+      margin: 0;
+      font-weight: 1000;
+      font-size: 36px;
+    }
 
-        /* Main Container */
-        .portfolio-container {
-            width: 100%;
-            max-width: 800px;
-            background: var(--card-bg);
-            border: 1px solid #333;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px var(--border-glow);
-        }
+    section {
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 10px;
+      background-color: #fffff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
 
-        /* Header Section */
-        header {
-            padding: 40px;
-            text-align: center;
-            border-bottom: 1px solid #333;
-            background: linear-gradient(180deg, #1a1a1a 0%, var(--card-bg) 100%);
-        }
+    section h2 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: 333;
+    }
 
-        header h1 {
-            font-size: 2.5rem;
-            letter-spacing: 2px;
-        }
+    p {
+      font-size: 16px;
+      text-align: justify;
+      line-height: 1.5;
+    }
 
-        header span {
-            color: var(--primary-green);
-        }
+    figure {
+      display: inline-block;
+      text-align: center;
+      margin: 15px;
+    }
 
-        header p {
-            color: var(--text-dim);
-            margin-top: 10px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    figure iframe {
+      border-radius: 10px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.2);
+    }
 
-        /* Navigation Bars */
-        nav {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 20px;
-        }
+    figcaption {
+      margin-top: 5px;
+      font-size: 16px;
+    }
 
-        .nav-bar {
-            background: #222;
-            padding: 15px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            border-left: 4px solid transparent;
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-        }
+    .image-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-        .nav-bar:hover {
-            background: #2a2a2a;
-            border-left: 4px solid var(--primary-green);
-            transform: translateX(5px);
-        }
+    .image-gallery img {
+      
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      box-shadow: 0 0 6px rgba(0,0,0,0.2);
+    }
 
-        .nav-bar.active {
-            background: #2a2a2a;
-            border-left: 4px solid var(--primary-green);
-            color: var(--primary-green);
-        }
+    .center {
+      text-align: center;
+    }
 
-        /* Content Area */
-        .content-section {
-            display: none; /* Hidden by default */
-            padding: 30px;
-            background: #111;
-            border-top: 1px solid #333;
-            animation: fadeIn 0.4s ease forwards;
-        }
+    footer {
+      text-align: center;
+      padding: 30px;
+      background-color: #fffff;
+      font-size: 18px;
+      color: #333;
+      margin-top: 30px;
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    a {
+      color: #4CB5F5;
+      text-decoration: none;
+    }
 
-        .content-section h2 {
-            color: var(--primary-green);
-            margin-bottom: 15px;
-        }
+    a:hover {
+      color: #4CB5F5;
+      text-decoration: underline;
+    }
 
-        .content-section p {
-            line-height: 1.6;
-            color: var(--text-dim);
-        }
-
-        /* Grid for Skills/Certificates */
-        .grid-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .grid-item {
-            background: #1a1a1a;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #333;
-            text-align: center;
-            font-size: 0.85rem;
-        }
-    </style>
+  </style>
 </head>
 <body>
 
-<div class="portfolio-container">
-    <header>
-        <h1>HI, I'M <span>Kenneth Espinosa</span></h1>
-        <p>Developer & UI Enthusiast</p>
-    </header>
+  <header>
+    <h1>PORTFOLIO</h1>
+  </header>
 
-    <nav>
-        <div class="nav-bar" onclick="toggleSection('about')">
-            <span>ABOUT ME</span>
-            <span>+</span>
-        </div>
-        <div id="about" class="content-section">
-            <h2>Personal Profile</h2>
-            <p>I am a passionate developer focused on creating clean, interactive, and user-friendly digital experiences. I enjoy turning complex problems into simple, beautiful, and intuitive designs.</p>
-        </div>
+  <section id="profile">
+    <h2>About Me</h2>
+    <p>This is Kenneth Espinosa, 20 years old, from the home of Bailes De Luces — La Castellana, Negros Occidental. I'm excited to connect and explore opportunities.
+      I am BSIT student of Central Philippine State University.
+    </p>
 
-        <div class="nav-bar" onclick="toggleSection('skills')">
-            <span>MY SKILLS</span>
-            <span>+</span>
-        </div>
-        <div id="skills" class="content-section">
-            <h2>Technical Expertise</h2>
-            <div class="grid-list">
-                <div class="grid-item">HTML5 / CSS3</div>
-                <div class="grid-item">JavaScript (ES6+)</div>
-                <div class="grid-item">UI/UX Design</div>
-                <div class="grid-item">Responsive Layouts</div>
-                <div class="grid-item">Version Control (Git)</div>
-                <div class="grid-item">Tailwind CSS</div>
-            </div>
-        </div>
+    <div class="center">
+      <h2>My Gallery</h2>
+      <div class="image-gallery">
+        <figure>
+          <img src="a.jpg" alt="Kenneth">
+          <a href="a.jpg"</a>
+          <img src="k.jpg" alt="Kenneth">
+          <a href="k.jpg"</a>
+          <img src="q.jpg" alt="Kenneth">
+          <a href="q.jpg"</a>
+        </figure>
+      </div>
+    </div>
 
-        <div class="nav-bar" onclick="toggleSection('certs')">
-            <span>CERTIFICATES</span>
-            <span>+</span>
-        </div>
-        <div id="certs" class="content-section">
-            <h2>Achievements</h2>
-            <div class="grid-list">
-                <div class="grid-item">Google UX Design Cert</div>
-                <div class="grid-item">Frontend Specialization</div>
-                <div class="grid-item">Meta Web Developer</div>
-                <div class="grid-item">Advanced CSS Mastery</div>
-            </div>
-        </div>
-    </nav>
-</div>
+    <div class="center">
+      <h2>My Video</h2>
+      <figure>
+      <video src="s.mp4" width="320" height="240" controls></video>
+      <a href="s.mp4">s.mp</a>
+      <figcaption>Blue Stallions</figcaption>
+      </figure>
+      <figure>
+      <video src="p.mp4" width="320" height="240" controls></video>
+        <a href="p.mp4">p.mp4</a>
+        <figcaption>Performance in Philippine Indigenous Communities</figcaption>
+      </figure>   
+      <figure>
+      <video src="c.mp4" width="320" height="240" controls></video>       
+        <a href="c.mp4">c.mp4</a>
+        <figcaption>Chorale Performance</figcaption>
+      </figure>   
+      </div>
 
-<script>
-    function toggleSection(sectionId) {
-        // Get all sections
-        const sections = document.querySelectorAll('.content-section');
-        const bars = document.querySelectorAll('.nav-bar');
-        
-        // Target section
-        const target = document.getElementById(sectionId);
-        const currentBar = target.previousElementSibling;
+    <div class="center">
+      <h2>My Music Videos</h2>
+      <figure>
+        <iframe width="300" height="200" src="https://youtu.be/-sNgBet587k?si=hEfitaFCBlBHJeKs" title="Ikaw At Ako by Johnoy Danao" allowfullscreen></iframe>
+        <figcaption>“Janice” By Dilaw</figcaption>
+      </figure>
+      <figure>
+        <iframe width="300" height="200" src="https://youtu.be/JS1VzEHgFYc?si=bJhcbrHIXgVwyGaF" title="Ano Ba Talaga Tayo" allowfullscreen></iframe>
+        <figcaption>“Ano Ba Talaga Tayo” by The Juans</figcaption>
+      </figure>
+      <figure>
+        <iframe width="300" height="200" src="https://www.youtube.com/embed/jb-U6YSpKuM" title="Multo by Cup of Joe" allowfullscreen></iframe>
+        <figcaption>“Multo” by Cup of Joe</figcaption>
+      </figure>
+    </div >
+    <div class="Center">
+      <h2>My Activities</h2>
+        <p>Figma Portfolio: <a href="https://www.figma.com/proto/3sQFzMbCY9e5Qn8obDBfip/my-portfolio.Kenneth?node-id=1-13&t=5pWrJln6y7I6wQ7P-1&fbclid=IwY2xjawNdFWtleHRuA2FlbQIxMQABHtYyYquJGA3u92m8j_8FZFa98EWCozc0i9rAHGhYdZRVAVMqDie_2C1MU3sP_aem__zGI1gN0GhLMzCD6tdkT3w">My Portfolio</a></p>
+          <div class="Center">
+        <p>Figma E-commerce: <a href="https://www.figma.com/proto/xQaAgGw9F1WD87YAc7Csua/Untitled?node-id=1-9&starting-point-node-id=1%3A9&t=ndbetmmiLNhVwU0n-1&fbclid=IwY2xjawNdFshleHRuA2FlbQIxMQABHstzOI9kDC9HYGIkmUGZbiimY0TGbkDwbQHyFIpB11ocHtFYVJNLzVwyy17K_aem_pF0QZh9u-us03d94NYS7IQ">My E-commerce</a></p>
+      
+      <div class="Center">
+      <h2>My Skills</h2>
+         
+      <h2>Contact Me</h2>
+        <center></center>
+      <p>Email: <a href="kennethespinosa032@gmail.com">kennethespinosa032@gmail.com</a></p>
+      <p>Facebook: <a href="https://www.facebook.com/share/1KAGgG8Fna/">Kenneth Ortega Espinosa</a>
+      <p>Phone: 0916-544-5201</p>
+      </div>
+      <label for="Fullname">Full Name:</label><br>
+      <Textarea id="Fullname" name="Fullname" rows="1" cols="20"></Textarea><br>
+      <label for="comments">Message:</label><br>
+      <Textarea id="comments" name="comments" rows="3" cols="40" placeholder="Right Your Message Here..."></Textarea>
+      <button type="submit"</button>
+            <a href="https://m.me/kenneth.espinosa.376">submit</a>
+      </section>
 
-        // If the section is already open, close it
-        if (target.style.display === "block") {
-            target.style.display = "none";
-            currentBar.classList.remove('active');
-            currentBar.querySelector('span:last-child').innerText = "+";
-        } else {
-            // Close all sections first for a clean look
-            sections.forEach(sec => sec.style.display = "none");
-            bars.forEach(bar => {
-                bar.classList.remove('active');
-                bar.querySelector('span:last-child').innerText = "+";
-            });
-
-            // Open the clicked one
-            target.style.display = "block";
-            currentBar.classList.add('active');
-            currentBar.querySelector('span:last-child').innerText = "-";
-        }
-    }
-</script>
+  <footer>
+    <p>&copy; 2025 Kenneth's Portfolio</p>
+  </footer>
 
 </body>
 </html>

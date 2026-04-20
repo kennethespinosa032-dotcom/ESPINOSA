@@ -1,7 +1,7 @@
-<div class="wp-block-group has-text-color has-background" style="background-color:#0f172a;color:#f8fafc;padding-top:50px;padding-right:30px;padding-bottom:50px;padding-left:30px">
+<div class="wp-block-group has-text-color has-background" style="background-color:#0f172a;color:#f8fafc;padding-top:50px;padding-right:30px;padding-bottom:50px;padding-left:30px; position: relative;">
 
     <div class="wp-block-group" style="margin-bottom:60px">
-        <p>
+        <p style="text-align: center;">
             <a href="#about" style="color:#38bdf8;text-decoration:none;margin:0 15px"><strong>ABOUT</strong></a>
             <a href="#projects" style="color:#38bdf8;text-decoration:none;margin:0 15px"><strong>PROJECTS</strong></a>
             <a href="#certificate" style="color:#38bdf8;text-decoration:none;margin:0 15px"><strong>CERTIFICATE</strong></a>
@@ -9,17 +9,19 @@
             <a href="#contact" style="color:#38bdf8;text-decoration:none;margin:0 15px"><strong>CONTACT</strong></a>
         </p>
     </div>
+
     <div class="wp-block-group" id="about">
         <div class="wp-block-columns are-vertically-aligned-center">
             <div class="wp-block-column item-vertically-aligned-center" style="flex-basis:33.33%">
                 <figure class="wp-block-image size-large"><img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/wp-image5057320212915007320.jpg?w=715" alt="Kenneth Espinosa" style="border-radius:15px;border:2px solid #38bdf8"/></figure>
-                </div>
+            </div>
             <div class="wp-block-column item-vertically-aligned-center" style="flex-basis:66.66%">
                 <h1 style="color:#38bdf8">Kenneth Ortega Espinosa</h1>
                 <p class="has-medium-font-size">20-year-old <strong>BSIT Student</strong> at Central Philippine State University. Hailing from La Castellana, Negros Occidental, I am a developer passionate about building hardware and software solutions.</p>
-                </div>
             </div>
         </div>
+    </div>
+
     <div style="height:80px" aria-hidden="true" class="wp-block-spacer"></div>
 
     <div class="wp-block-group" id="projects">
@@ -28,19 +30,14 @@
             <div class="wp-block-column">
                 <figure class="wp-block-image size-large"><img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/messenger_creation_dff2028d-b696-4233-bc6f-417f0cc5a2064556441811294128454.png?w=654" alt="Chessboard Project" style="border-radius:8px"/></figure>
                 <p class="has-text-align-center"><strong>Chessboard Logic System</strong></p>
-                </div>
+            </div>
             <div class="wp-block-column">
                 <figure class="wp-block-image size-large"><img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/img_20260408_160039_2431949334295796665429.jpg?w=768" alt="Vending Machine" style="border-radius:8px"/></figure>
                 <p class="has-text-align-center"><strong>Mini Hoop Vending Machine</strong></p>
-                </div>
             </div>
         </div>
-    <div style="height:80px" aria-hidden="true" class="wp-block-spacer"></div>
+    </div>
 
-    <div class="wp-block-group" id="certificate">
-        <h2 class="has-text-align-center" style="color:#38bdf8">Certifications</h2>
-        <figure class="wp-block-image aligncenter size-large"><img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/img_20260420_230959_0897883559325828451454.jpeg?w=940" alt="Certificate" style="border:2px solid #38bdf8;border-radius:10px"/></figure>
-        </div>
     <div style="height:80px" aria-hidden="true" class="wp-block-spacer"></div>
 
     <div class="wp-block-group" id="skills">
@@ -48,16 +45,83 @@
         <div class="wp-block-columns">
             <div class="wp-block-column">
                 <p class="has-text-align-center">💻 <strong>Languages</strong><br>JAVA • C++</p>
-                </div>
+            </div>
             <div class="wp-block-column">
                 <p class="has-text-align-center">🌐 <strong>Web Tech</strong><br>HTML • CSS</p>
-                </div>
             </div>
         </div>
+    </div>
+
     <div style="height:80px" aria-hidden="true" class="wp-block-spacer"></div>
 
-    <div class="wp-block-group has-background" id="contact" style="background-color:#1e293b;border-radius:20px;border-width:1px;padding-top:40px;padding-right:40px;padding-bottom:40px;padding-left:40px">
+    <div class="wp-block-group has-background" id="contact" style="background-color:#1e293b;border-radius:20px;padding:40px">
         <h2 class="has-text-align-center" style="color:#38bdf8">Get in Touch</h2>
         <p class="has-text-align-center">📍 Negros Occidental, PH<br>📧 <a href="mailto:kennethespinosa032@gmail.com" style="color:#38bdf8">kennethespinosa032@gmail.com</a><br>📱 09165445201<br>👤 FB: Kenneth Ortega Espinosa</p>
+    </div>
+
+    <div id="k-chat-btn" style="position:fixed; bottom:30px; right:30px; width:60px; height:60px; background:#38bdf8; border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer; box-shadow:0 4px 15px rgba(0,0,0,0.3); z-index:9999;">
+        <span style="font-size:30px;">💬</span>
+    </div>
+
+    <div id="k-chat-box" style="position:fixed; bottom:100px; right:30px; width:300px; height:400px; background:#1e293b; border:1px solid #38bdf8; border-radius:15px; display:none; flex-direction:column; box-shadow:0 10px 30px rgba(0,0,0,0.5); z-index:9999; overflow:hidden; font-family:sans-serif;">
+        <div style="background:#38bdf8; color:#0f172a; padding:15px; font-weight:bold; display:flex; justify-content:space-between;">
+            <span>Kenneth's Assistant</span>
+            <span id="k-chat-close" style="cursor:pointer;">&times;</span>
+        </div>
+        <div id="k-chat-logs" style="flex:1; padding:15px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; font-size:14px; color:#f8fafc;">
+            <div style="background:#334155; padding:10px; border-radius:10px; align-self:flex-start;">Hi! I'm Kenneth's bot. Ask me about his projects, skills, or contact info!</div>
+        </div>
+        <div style="display:flex; border-top:1px solid #334155;">
+            <input type="text" id="k-chat-input" placeholder="Type a question..." style="flex:1; border:none; padding:12px; background:transparent; color:white; outline:none;">
+            <button id="k-chat-send" style="background:#38bdf8; border:none; padding:10px; cursor:pointer; font-weight:bold;">Send</button>
         </div>
     </div>
+
+    <script>
+        const chatBtn = document.getElementById('k-chat-btn');
+        const chatBox = document.getElementById('k-chat-box');
+        const chatClose = document.getElementById('k-chat-close');
+        const chatInput = document.getElementById('k-chat-input');
+        const chatSend = document.getElementById('k-chat-send');
+        const chatLogs = document.getElementById('k-chat-logs');
+
+        chatBtn.onclick = () => chatBox.style.display = (chatBox.style.display === 'flex') ? 'none' : 'flex';
+        chatClose.onclick = () => chatBox.style.display = 'none';
+
+        function addMsg(text, isUser) {
+            const div = document.createElement('div');
+            div.style.padding = '10px';
+            div.style.borderRadius = '10px';
+            div.style.maxWidth = '85%';
+            div.style.alignSelf = isUser ? 'flex-end' : 'flex-start';
+            div.style.background = isUser ? '#38bdf8' : '#334155';
+            div.style.color = isUser ? '#0f172a' : '#f8fafc';
+            div.innerText = text;
+            chatLogs.appendChild(div);
+            chatLogs.scrollTop = chatLogs.scrollHeight;
+        }
+
+        chatSend.onclick = () => {
+            const query = chatInput.value.toLowerCase();
+            if(!query) return;
+            addMsg(chatInput.value, true);
+            chatInput.value = '';
+
+            setTimeout(() => {
+                if(query.includes('project') || query.includes('chessboard') || query.includes('vending')) {
+                    addMsg("Kenneth has built a Chessboard Logic System and a Mini Hoop Vending Machine. Check the 'PROJECTS' section!", false);
+                } else if(query.includes('skill') || query.includes('language') || query.includes('code')) {
+                    addMsg("He is proficient in JAVA, C++, HTML, and CSS.", false);
+                } else if(query.includes('contact') || query.includes('email') || query.includes('fb')) {
+                    addMsg("You can email him at kennethespinosa032@gmail.com or find him on Facebook as Kenneth Ortega Espinosa.", false);
+                } else if(query.includes('who') || query.includes('about')) {
+                    addMsg("Kenneth is a 20-year-old BSIT student at CPSU from Negros Occidental.", false);
+                } else {
+                    addMsg("I'm not sure about that. Try asking about his skills, projects, or contact info!", false);
+                }
+            }, 600);
+        };
+
+        chatInput.onkeypress = (e) => { if(e.key === 'Enter') chatSend.click(); };
+    </script>
+</div>

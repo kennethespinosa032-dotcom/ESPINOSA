@@ -2,11 +2,11 @@
     /* Professional IT Midnight Theme - Elite Edition */
     .it-portfolio-wrapper {
         background-color: #020617; 
-        /* Professional Layered Background */
         background-image: 
             radial-gradient(at 0% 0%, rgba(0, 255, 65, 0.03) 0, transparent 50%), 
             radial-gradient(at 100% 0%, rgba(0, 255, 65, 0.03) 0, transparent 50%),
             linear-gradient(to bottom, #020617, #0f172a);
+        background-attachment: fixed;
         color: #f1f5f9;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         padding: 0;
@@ -14,6 +14,7 @@
         scroll-behavior: smooth;
         text-align: center;
         overflow-x: hidden;
+        min-height: 100vh;
     }
 
     /* Professional Subtle Grid Overlay */
@@ -36,7 +37,6 @@
         padding: 80px 20px;
     }
 
-    /* Modern Navigation */
     .nav-bar {
         position: sticky;
         top: 0;
@@ -66,9 +66,8 @@
         text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
     }
 
-    /* Refined Section Headers */
     .section-header {
-        margin-bottom: 100px;
+        margin-bottom: 120px;
         opacity: 0;
         transform: translateY(20px);
         animation: fadeInUp 0.8s forwards;
@@ -85,19 +84,14 @@
         text-transform: uppercase;
     }
 
-    .section-header h2::before {
-        content: "[ "; color: #00ff41;
-    }
-    .section-header h2::after {
-        content: " ]"; color: #00ff41;
-    }
+    .section-header h2::before { content: "[ "; color: #00ff41; }
+    .section-header h2::after { content: " ]"; color: #00ff41; }
 
-    /* Elite Glass Cards */
     .glass-card {
         background: rgba(15, 23, 42, 0.4);
         backdrop-filter: blur(8px);
         border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 2px; /* Professional sharp look */
+        border-radius: 4px;
         padding: 40px;
         transition: all 0.4s ease;
         box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
@@ -107,86 +101,26 @@
         background: rgba(15, 23, 42, 0.7);
         border-color: rgba(0, 255, 65, 0.3);
         transform: translateY(-5px);
-        box-shadow: 0 20px 40px -15px rgba(0, 255, 65, 0.1);
     }
 
-    /* Action Button */
     .btn-terminal {
         border: 1px solid #00ff41;
         color: #00ff41;
-        padding: 14px 40px;
+        padding: 12px 30px;
         text-decoration: none;
         font-weight: bold;
         font-size: 0.7rem;
-        letter-spacing: 3px;
+        letter-spacing: 2px;
         transition: all 0.3s;
-        background: transparent;
+        background: rgba(0, 255, 65, 0.05);
         display: inline-block;
+        font-family: monospace;
+        margin-top: 15px;
     }
 
     .btn-terminal:hover {
-        background: rgba(0, 255, 65, 0.1);
-        box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
-        transform: translateY(-2px);
-    }
-
-    /* Terminal Chatbot */
-    #bot-launcher {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        width: 50px;
-        height: 50px;
-        background: #00ff41;
-        border-radius: 0px; /* Square terminal look */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 9999;
-        transition: 0.3s;
-    }
-
-    #chat-window {
-        position: fixed;
-        bottom: 90px;
-        right: 30px;
-        width: 320px;
-        height: 420px;
-        background: #020617;
-        border: 1px solid rgba(0, 255, 65, 0.3);
-        display: none;
-        flex-direction: column;
-        z-index: 9999;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-    }
-
-    .chat-header {
-        background: #0f172a;
-        color: #00ff41;
-        padding: 10px 15px;
-        font-family: monospace;
-        font-size: 0.7rem;
-        border-bottom: 1px solid rgba(0, 255, 65, 0.1);
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .chat-messages {
-        flex: 1;
-        padding: 15px;
-        overflow-y: auto;
-        font-family: 'Courier New', monospace;
-        font-size: 0.8rem;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        text-align: left;
-        background: #020617;
-    }
-
-    @keyframes fadeInUp {
-        to { opacity: 1; transform: translateY(0); }
+        background: rgba(0, 255, 65, 0.2);
+        box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
     }
 
     .profile-img {
@@ -197,15 +131,22 @@
         padding: 5px;
         margin-bottom: 30px;
     }
+
+    /* Terminal Styles */
+    #bot-launcher { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: #00ff41; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 9999; }
+    #chat-window { position: fixed; bottom: 90px; right: 30px; width: 320px; height: 420px; background: #020617; border: 1px solid rgba(0, 255, 65, 0.3); display: none; flex-direction: column; z-index: 9999; }
+    .chat-header { background: #0f172a; color: #00ff41; padding: 10px 15px; font-family: monospace; font-size: 0.7rem; display: flex; justify-content: space-between; }
+    .chat-messages { flex: 1; padding: 15px; overflow-y: auto; font-family: monospace; font-size: 0.8rem; display: flex; flex-direction: column; gap: 12px; text-align: left; }
+
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
 </style>
 
 <div class="it-portfolio-wrapper">
     <nav class="nav-bar">
         <a href="#about">About</a>
         <a href="#projects">Projects</a>
-        <a href="#certificate">Docs</a>
         <a href="#skills">Stack</a>
-        <a href="#contact">Terminal</a>
+        <a href="#contact">Contact</a>
     </nav>
 
     <div class="it-container">
@@ -227,31 +168,24 @@
 
         <section id="projects" class="section-header">
             <h2>Archive_Projects</h2>
-            <div class="wp-block-columns" style="gap: 25px;">
-                <div class="wp-block-column glass-card">
+            <div style="display: flex; gap: 25px; flex-wrap: wrap; justify-content: center;">
+                <div class="glass-card" style="flex: 1; min-width: 300px;">
                     <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/messenger_creation_dff2028d-b696-4233-bc6f-417f0cc5a2064556441811294128454.png?w=654" style="width: 100%; filter: brightness(0.8);">
-                    <h4 style="margin-top:25px; color:#00ff41; font-size: 0.8rem; letter-spacing: 2px;">V1.0_DIGITAL_CHESS</h4>
+                    <h4 style="margin: 20px 0; color:#00ff41; font-size: 0.8rem; letter-spacing: 2px;">V1.0_DIGITAL_CHESS</h4>
+                    <a href="https://www.figma.com/proto/3sQFzMbCY9e5Qn8obDBfip/my-portfolio.Kenneth" class="btn-terminal">RUN_FIGMA_PORTFOLIO</a>
                 </div>
-                <div class="wp-block-column glass-card">
+
+                <div class="glass-card" style="flex: 1; min-width: 300px;">
                     <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/img_20260408_160039_2431949334295796665429.jpg?w=768" style="width: 100%; filter: brightness(0.8);">
-                    <h4 style="margin-top:25px; color:#00ff41; font-size: 0.8rem; letter-spacing: 2px;">V2.1_HOOP_VENDING</h4>
-                
-                    <a href="https://www.figma.com/proto/3sQFzMbCY9e5Qn8obDBfip/my-portfolio.Kenneth?node-id=1-13&t=5pWrJln6y7I6wQ7P-1&fbclid=IwY2xjawNdFWtleHRuA2FlbQIxMQABHtYyYquJGA3u92m8j_8FZFa98EWCozc0i9rAHGhYdZRVAVMqDie_2C1MU3sP_aem__zGI1gN0GhLMzCD6tdkT3w" 
-                       style="display: inline-block; border: 1px solid #00ff41; color: #00ff41; padding: 10px 20px; text-decoration: none; font-size: 0.7rem; font-family: monospace; transition: 0.3s; background: rgba(0, 255, 65, 0.05); margin-top: 10px;">
-                       RUN_FIGMA_PORTFOLIO
-                    </a>
-                </div>
-                    <a href="https://www.figma.com/proto/xQaAgGw9F1WD87YAc7Csua/Untitled?node-id=1-9&starting-point-node-id=1%3A9&t=ndbetmmiLNhVwU0n-1&fbclid=IwY2xjawNdFshleHRuA2FlbQIxMQABHstzOI9kDC9HYGIkmUGZbiimY0TGbkDwbQHyFIpB11ocHtFYVJNLzVwyy17K_aem_pF0QZh9u-us03d94NYS7IQ" 
-                       style="display: inline-block; border: 1px solid #00ff41; color: #00ff41; padding: 10px 20px; text-decoration: none; font-size: 0.7rem; font-family: monospace; transition: 0.3s; background: rgba(0, 255, 65, 0.05); margin-top: 10px;">
-                       RUN_FIGMA_ECOMMERCE
-                    </a>
+                    <h4 style="margin: 20px 0; color:#00ff41; font-size: 0.8rem; letter-spacing: 2px;">V2.1_HOOP_VENDING</h4>
+                    <a href="https://www.figma.com/proto/xQaAgGw9F1WD87YAc7Csua/Untitled" class="btn-terminal">RUN_FIGMA_ECOMMERCE</a>
                 </div>
             </div>
         </section>
 
         <section id="skills" class="section-header">
             <h2>Primary_Stack</h2>
-            <div class="glass-card" style="display: flex; justify-content: space-around; background: rgba(0, 255, 65, 0.02);">
+            <div class="glass-card" style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
                 <div>
                     <h4 style="color:#00ff41; font-size: 0.7rem; letter-spacing: 2px;">CORE_BACKEND</h4>
                     <p style="color: #f1f5f9; font-family: monospace;">JAVA // C++</p>
@@ -267,7 +201,7 @@
         <section id="contact" class="section-header" style="padding-bottom: 100px;">
             <h2>Contact_Port</h2>
             <div class="glass-card">
-                <p style="color: #94a3b8; font-size: 0.9rem;">ENCRYPTED_MAIL: <span style="color:#fff">kennethespinosa032@gmail.com</span></p>
+                <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">ENCRYPTED_MAIL: <span style="color:#fff">kennethespinosa032@gmail.com</span></p>
                 <p style="color: #94a3b8; font-size: 0.9rem;">OFFICIAL_TEL: <span style="color:#fff">0916 544 5201</span></p>
             </div>
         </section>
@@ -282,7 +216,7 @@
             <span onclick="toggleChat()" style="cursor:pointer; color: #ef4444;">[X]</span>
         </div>
         <div class="chat-messages" id="chat-msgs">
-            <div class="msg bot-msg">Ready for input. Type 'help' to see available commands.</div>
+            <div class="msg bot-msg">Ready for input. Type 'help'.</div>
         </div>
         <div class="chat-input-area" style="padding: 10px; background: #0f172a; display: flex; border-top: 1px solid rgba(0,255,65,0.1);">
             <input type="text" id="user-input" placeholder="Enter command..." onkeypress="handleKey(event)" style="flex:1; background:transparent; border:none; color:#00ff41; font-family:monospace; outline:none;">
@@ -311,8 +245,8 @@
             if (text === 'help') reply = "CMDS: 'about', 'skills', 'projects', 'contact'.";
             else if (text === 'about') reply = "User: Kenneth Espinosa. Status: BSIT Student at CPSU.";
             else if (text === 'skills') reply = "Backend: Java, C++. Frontend: HTML, CSS.";
-            else if (text === 'projects') reply = "Database contains: Digital Chessboard, Hoop Vending Machine.";
-            else if (text === 'contact') reply = "Mail kennethespinosa032@gmail.com for inquiries.";
+            else if (text === 'projects') reply = "Database: Digital Chessboard, Hoop Vending Machine.";
+            else if (text === 'contact') reply = "Mail kennethespinosa032@gmail.com";
 
             addMsg(reply, 'bot-msg');
         }, 400);

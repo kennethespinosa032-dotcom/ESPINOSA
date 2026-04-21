@@ -1,263 +1,131 @@
 <style>
-    /* Professional IT Midnight Theme - Elite Edition */
-    .it-portfolio-wrapper {
-        background-color: #020617; 
-        background-image: 
-            radial-gradient(at 0% 0%, rgba(0, 255, 65, 0.03) 0, transparent 50%), 
-            radial-gradient(at 100% 0%, rgba(0, 255, 65, 0.03) 0, transparent 50%),
-            linear-gradient(to bottom, #020617, #0f172a);
-        background-attachment: fixed;
-        color: #f1f5f9;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        padding: 0;
-        margin: 0;
-        scroll-behavior: smooth;
+    /* Professional Portfolio Styles */
+    .prof-portfolio-container {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #f8fafc;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        padding: 40px 20px;
+        border-radius: 12px;
+        max-width: 900px;
+        margin: 20px auto;
+        line-height: 1.6;
+    }
+
+    .prof-header {
         text-align: center;
-        overflow-x: hidden;
-        min-height: 100vh;
+        margin-bottom: 40px;
     }
 
-    /* Professional Subtle Grid Overlay */
-    .it-portfolio-wrapper::before {
-        content: "";
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background-image: radial-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 0);
-        background-size: 40px 40px;
-        pointer-events: none;
-        z-index: 1;
-    }
-    
-    .it-container {
-        position: relative;
-        z-index: 2;
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 80px 20px;
+    .prof-section-title {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: #38bdf8;
+        margin: 40px 0 20px;
+        text-transform: uppercase;
+        border-bottom: 1px solid #334155;
+        padding-bottom: 10px;
     }
 
-    .nav-bar {
-        position: sticky;
-        top: 0;
-        background: rgba(2, 6, 23, 0.85);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
+    .prof-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .prof-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .prof-img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+    .prof-skills-grid {
         display: flex;
         justify-content: center;
-        gap: 30px;
-        padding: 18px;
-        z-index: 1000;
-        border-bottom: 1px solid rgba(0, 255, 65, 0.15);
+        gap: 15px;
+        flex-wrap: wrap;
     }
 
-    .nav-bar a {
-        color: #94a3b8;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        transition: all 0.4s ease;
-    }
-
-    .nav-bar a:hover {
-        color: #00ff41;
-        text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
-    }
-
-    .section-header {
-        margin-bottom: 120px;
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeInUp 0.8s forwards;
-    }
-
-    .section-header h2 {
-        font-size: 1.5rem;
-        color: #ffffff;
-        letter-spacing: 6px;
-        margin-bottom: 40px;
-        position: relative;
-        display: inline-block;
-        font-weight: 700;
-        text-transform: uppercase;
-    }
-
-    .section-header h2::before { content: "[ "; color: #00ff41; }
-    .section-header h2::after { content: " ]"; color: #00ff41; }
-
-    .glass-card {
-        background: rgba(15, 23, 42, 0.4);
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 4px;
-        padding: 40px;
-        transition: all 0.4s ease;
-        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-    }
-
-    .glass-card:hover {
-        background: rgba(15, 23, 42, 0.7);
-        border-color: rgba(0, 255, 65, 0.3);
-        transform: translateY(-5px);
-    }
-
-    .btn-terminal {
-        border: 1px solid #00ff41;
-        color: #00ff41;
-        padding: 12px 30px;
-        text-decoration: none;
+    .skill-tag {
+        background: #38bdf8;
+        color: #0f172a;
+        padding: 5px 15px;
+        border-radius: 20px;
         font-weight: bold;
-        font-size: 0.7rem;
-        letter-spacing: 2px;
-        transition: all 0.3s;
-        background: rgba(0, 255, 65, 0.05);
-        display: inline-block;
-        font-family: monospace;
-        margin-top: 15px;
+        font-size: 0.9rem;
     }
 
-    .btn-terminal:hover {
-        background: rgba(0, 255, 65, 0.2);
-        box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+    .prof-link {
+        color: #38bdf8;
+        text-decoration: none;
+        font-weight: 600;
     }
 
-    .profile-img {
-        width: 150px;
-        height: 150px;
-        object-fit: cover;
-        border: 1px solid rgba(0, 255, 65, 0.3);
-        padding: 5px;
-        margin-bottom: 30px;
+    .prof-link:hover {
+        text-decoration: underline;
     }
 
-    /* Terminal Styles */
-    #bot-launcher { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: #00ff41; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 9999; }
-    #chat-window { position: fixed; bottom: 90px; right: 30px; width: 320px; height: 420px; background: #020617; border: 1px solid rgba(0, 255, 65, 0.3); display: none; flex-direction: column; z-index: 9999; }
-    .chat-header { background: #0f172a; color: #00ff41; padding: 10px 15px; font-family: monospace; font-size: 0.7rem; display: flex; justify-content: space-between; }
-    .chat-messages { flex: 1; padding: 15px; overflow-y: auto; font-family: monospace; font-size: 0.8rem; display: flex; flex-direction: column; gap: 12px; text-align: left; }
-
-    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+    .prof-contact {
+        text-align: center;
+        font-size: 0.9rem;
+        color: #94a3b8;
+    }
 </style>
 
-<div class="it-portfolio-wrapper">
-    <nav class="nav-bar">
-        <a href="#about">About</a>
-        <a href="#projects">Projects</a>
-        <a href="#skills">Stack</a>
-        <a href="#contact">Contact</a>
-    </nav>
-
-    <div class="it-container">
-        <div style="margin-bottom: 120px;">
-            <a href="https://canva.link/60u4gflbji626jm" class="btn-terminal">INITIALIZE_CV_DOWNLOAD</a>
-        </div>
-
-        <section id="about" class="section-header">
-            <h2>System_User</h2>
-            <div class="glass-card" style="display: flex; flex-direction: column; align-items: center;">
-                <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/img_20260421_155321_2752969142916371420451.png?w=1024" class="profile-img">
-                <p style="max-width: 650px; color: #94a3b8; line-height: 2; font-size: 0.95rem;">
-                    I am <strong>Kenneth Espinosa</strong>, a 20-year-old BSIT student at Central Philippine State University. 
-                    Specializing in information systems and digital logic, I focus on transforming complex problems into 
-                    efficient, scalable code solutions.
-                </p>
-            </div>
-        </section>
-
-        <section id="projects" class="section-header">
-            <h2>Archive_Projects</h2>
-            <div style="display: flex; gap: 25px; flex-wrap: wrap; justify-content: center;">
-                <div class="glass-card" style="flex: 1; min-width: 300px;">
-                    <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/messenger_creation_dff2028d-b696-4233-bc6f-417f0cc5a2064556441811294128454.png?w=654" style="width: 100%; filter: brightness(0.8);">
-                    <h4 style="margin: 20px 0; color:#00ff41; font-size: 0.8rem; letter-spacing: 2px;">V1.0_DIGITAL_CHESS</h4>
-                    <a href="https://www.figma.com/proto/3sQFzMbCY9e5Qn8obDBfip/my-portfolio.Kenneth" class="btn-terminal">RUN_FIGMA_PORTFOLIO</a>
-                </div>
-
-                <div class="glass-card" style="flex: 1; min-width: 300px;">
-                    <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/img_20260408_160039_2431949334295796665429.jpg?w=768" style="width: 100%; filter: brightness(0.8);">
-                    <h4 style="margin: 20px 0; color:#00ff41; font-size: 0.8rem; letter-spacing: 2px;">V2.1_HOOP_VENDING</h4>
-                    <a href="https://www.figma.com/proto/xQaAgGw9F1WD87YAc7Csua/Untitled" class="btn-terminal">RUN_FIGMA_ECOMMERCE</a>
-                </div>
-            </div>
-        </section>
-
-        <section id="skills" class="section-header">
-            <h2>Primary_Stack</h2>
-            <div class="glass-card" style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
-                <div>
-                    <h4 style="color:#00ff41; font-size: 0.7rem; letter-spacing: 2px;">CORE_BACKEND</h4>
-                    <p style="color: #f1f5f9; font-family: monospace;">JAVA // C++</p>
-                </div>
-                <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
-                <div>
-                    <h4 style="color:#00ff41; font-size: 0.7rem; letter-spacing: 2px;">UI_INTERFACE</h4>
-                    <p style="color: #f1f5f9; font-family: monospace;">HTML5 // CSS3</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="contact" class="section-header" style="padding-bottom: 100px;">
-            <h2>Contact_Port</h2>
-            <div class="glass-card">
-                <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">ENCRYPTED_MAIL: <span style="color:#fff">kennethespinosa032@gmail.com</span></p>
-                <p style="color: #94a3b8; font-size: 0.9rem;">OFFICIAL_TEL: <span style="color:#fff">0916 544 5201</span></p>
-            </div>
-        </section>
+<div class="prof-portfolio-container">
+    <div class="prof-header">
+        <a href="https://canva.link/60u4gflbji626jm" class="prof-link">View Graphic Resume</a>
+        <h2 class="prof-section-title">About Me</h2>
+        <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/img_20260421_155321_2756147198746022741277.png?w=1024" alt="Kenneth Espinosa" class="prof-img" style="max-width: 300px; border-radius: 50%;">
+        <p><strong>Kenneth Ortega Espinosa</strong></p>
+        <p>BSIT Student | Central Philippine State University</p>
+        <p style="font-size: 0.95rem; color: #cbd5e1;">From La Castellana, Negros Occidental. Dedicated to building innovative digital solutions and exploring the intersection of technology and design.</p>
     </div>
 
-    <div id="bot-launcher" onclick="toggleChat()">
-        <span style="font-family: monospace; font-weight: bold; font-size: 18px; color: #020617;">>_</span>
+    <h2 class="prof-section-title">Projects</h2>
+    
+    <div class="prof-card">
+        <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/messenger_creation_dff2028d-b696-4233-bc6f-417f0cc5a2068569528620364012555.png?w=654" alt="Chessboard" class="prof-img">
+        <p style="text-align: center;"><strong>Chessboard Project</strong></p>
     </div>
-    <div id="chat-window">
-        <div class="chat-header">
-            <span>TERMINAL_AI_ASSISTANT</span>
-            <span onclick="toggleChat()" style="cursor:pointer; color: #ef4444;">[X]</span>
-        </div>
-        <div class="chat-messages" id="chat-msgs">
-            <div class="msg bot-msg">Ready for input. Type 'help'.</div>
-        </div>
-        <div class="chat-input-area" style="padding: 10px; background: #0f172a; display: flex; border-top: 1px solid rgba(0,255,65,0.1);">
-            <input type="text" id="user-input" placeholder="Enter command..." onkeypress="handleKey(event)" style="flex:1; background:transparent; border:none; color:#00ff41; font-family:monospace; outline:none;">
-        </div>
+
+    <div class="prof-card">
+        <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/img_20260408_160021_0512577764775784697181.jpg?w=768" alt="Mini Hoopshot" class="prof-img">
+        <p style="text-align: center;"><strong>Mini Hoopshot Vending Machine</strong></p>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <p><a href="https://www.figma.com/proto/3sQFzMbCY9e5Qn8obDBfip/my-portfolio.Kenneth" class="prof-link">View Figma Portfolio</a></p>
+        <p><a href="https://www.figma.com/proto/xQaAgGw9F1WD87YAc7Csua/Untitled" class="prof-link">View E-Commerce Prototype</a></p>
+    </div>
+
+    <h2 class="prof-section-title">Technical Skills</h2>
+    <div class="prof-skills-grid">
+        <span class="skill-tag">Java</span>
+        <span class="skill-tag">C++</span>
+        <span class="skill-tag">HTML</span>
+        <span class="skill-tag">CSS</span>
+    </div>
+
+    <h2 class="prof-section-title">Certifications</h2>
+    <div class="prof-card">
+        <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/img_20260420_230959_0896132015911634821955.jpeg?w=940" alt="Certificate" class="prof-img">
+    </div>
+
+    <h2 class="prof-section-title">Connect With Me</h2>
+    <div class="prof-contact">
+        <p>📧 Email: kennethespinosa032@gmail.com</p>
+        <p>📞 Phone: 09165445201</p>
+        <p>👤 FB: Kenneth Ortega Espinosa</p>
     </div>
 </div>
-
-<script>
-    function toggleChat() {
-        const win = document.getElementById('chat-window');
-        win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
-    }
-
-    function handleKey(e) { if (e.key === 'Enter') sendMessage(); }
-
-    function sendMessage() {
-        const input = document.getElementById('user-input');
-        const text = input.value.trim().toLowerCase();
-        if (!text) return;
-
-        addMsg("> " + input.value, 'user-msg');
-        input.value = '';
-
-        setTimeout(() => {
-            let reply = "STDOUT: Command not found. Try 'help'.";
-            if (text === 'help') reply = "CMDS: 'about', 'skills', 'projects', 'contact'.";
-            else if (text === 'about') reply = "User: Kenneth Espinosa. Status: BSIT Student at CPSU.";
-            else if (text === 'skills') reply = "Backend: Java, C++. Frontend: HTML, CSS.";
-            else if (text === 'projects') reply = "Database: Digital Chessboard, Hoop Vending Machine.";
-            else if (text === 'contact') reply = "Mail kennethespinosa032@gmail.com";
-
-            addMsg(reply, 'bot-msg');
-        }, 400);
-    }
-
-    function addMsg(text, type) {
-        const div = document.createElement('div');
-        div.className = 'msg ' + type;
-        div.innerText = text;
-        const container = document.getElementById('chat-msgs');
-        container.appendChild(div);
-        container.scrollTop = container.scrollHeight;
-    }
-</script>

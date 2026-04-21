@@ -1,21 +1,36 @@
 <style>
-    /* Professional IT Midnight Theme */
+    /* Professional IT Midnight Theme - Elite Edition */
     .it-portfolio-wrapper {
-        background-color: #020617; /* Deep Midnight */
+        background-color: #020617; 
+        /* Professional Layered Background */
         background-image: 
-            radial-gradient(circle at 50% 50%, rgba(0, 255, 65, 0.05) 0%, transparent 80%),
-            linear-gradient(rgba(0, 255, 65, 0.02) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 255, 65, 0.02) 1px, transparent 1px);
-        background-size: 100% 100%, 30px 30px, 30px 30px;
+            radial-gradient(at 0% 0%, rgba(0, 255, 65, 0.03) 0, transparent 50%), 
+            radial-gradient(at 100% 0%, rgba(0, 255, 65, 0.03) 0, transparent 50%),
+            linear-gradient(to bottom, #020617, #0f172a);
         color: #f1f5f9;
-        font-family: 'Inter', 'Segoe UI', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         padding: 0;
         margin: 0;
         scroll-behavior: smooth;
         text-align: center;
+        overflow-x: hidden;
+    }
+
+    /* Professional Subtle Grid Overlay */
+    .it-portfolio-wrapper::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background-image: radial-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 0);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 1;
     }
     
     .it-container {
+        position: relative;
+        z-index: 2;
         max-width: 1000px;
         margin: 0 auto;
         padding: 80px 20px;
@@ -25,130 +40,134 @@
     .nav-bar {
         position: sticky;
         top: 0;
-        background: rgba(2, 6, 23, 0.8);
-        backdrop-filter: blur(12px);
+        background: rgba(2, 6, 23, 0.85);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
         display: flex;
         justify-content: center;
         gap: 30px;
-        padding: 20px;
+        padding: 18px;
         z-index: 1000;
-        border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+        border-bottom: 1px solid rgba(0, 255, 65, 0.15);
     }
 
     .nav-bar a {
         color: #94a3b8;
         text-decoration: none;
         font-weight: 500;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
-        letter-spacing: 1.5px;
-        transition: all 0.3s ease;
+        letter-spacing: 2px;
+        transition: all 0.4s ease;
     }
 
     .nav-bar a:hover {
         color: #00ff41;
-        letter-spacing: 3px;
+        text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
     }
 
-    /* Section Headers */
+    /* Refined Section Headers */
     .section-header {
-        margin-bottom: 80px;
+        margin-bottom: 100px;
         opacity: 0;
         transform: translateY(20px);
         animation: fadeInUp 0.8s forwards;
     }
 
     .section-header h2 {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         color: #ffffff;
-        letter-spacing: 4px;
-        margin-bottom: 30px;
+        letter-spacing: 6px;
+        margin-bottom: 40px;
         position: relative;
         display: inline-block;
+        font-weight: 700;
+        text-transform: uppercase;
     }
 
+    .section-header h2::before {
+        content: "[ "; color: #00ff41;
+    }
     .section-header h2::after {
-        content: "";
-        position: absolute;
-        bottom: -10px;
-        left: 25%;
-        width: 50%;
-        height: 2px;
-        background: #00ff41;
-        box-shadow: 0 0 10px #00ff41;
+        content: " ]"; color: #00ff41;
     }
 
-    /* Premium IT Cards */
+    /* Elite Glass Cards */
     .glass-card {
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(0, 255, 65, 0.1);
-        border-radius: 4px; /* Sharper edges for a more technical look */
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 2px; /* Professional sharp look */
         padding: 40px;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .glass-card::before {
-        content: "";
-        position: absolute;
-        top: 0; left: 0;
-        width: 4px; height: 100%;
-        background: #00ff41;
-        opacity: 0;
-        transition: 0.3s;
+        transition: all 0.4s ease;
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
     }
 
     .glass-card:hover {
-        background: rgba(15, 23, 42, 0.9);
-        border-color: rgba(0, 255, 65, 0.4);
-        transform: scale(1.02);
+        background: rgba(15, 23, 42, 0.7);
+        border-color: rgba(0, 255, 65, 0.3);
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px -15px rgba(0, 255, 65, 0.1);
     }
 
-    .glass-card:hover::before {
-        opacity: 1;
+    /* Action Button */
+    .btn-terminal {
+        border: 1px solid #00ff41;
+        color: #00ff41;
+        padding: 14px 40px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 0.7rem;
+        letter-spacing: 3px;
+        transition: all 0.3s;
+        background: transparent;
+        display: inline-block;
     }
 
-    /* Terminal Chatbot UI */
+    .btn-terminal:hover {
+        background: rgba(0, 255, 65, 0.1);
+        box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+        transform: translateY(-2px);
+    }
+
+    /* Terminal Chatbot */
     #bot-launcher {
         position: fixed;
         bottom: 30px;
         right: 30px;
-        width: 55px;
-        height: 55px;
+        width: 50px;
+        height: 50px;
         background: #00ff41;
-        border-radius: 4px;
+        border-radius: 0px; /* Square terminal look */
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
         z-index: 9999;
+        transition: 0.3s;
     }
 
     #chat-window {
         position: fixed;
-        bottom: 100px;
+        bottom: 90px;
         right: 30px;
         width: 320px;
-        height: 400px;
+        height: 420px;
         background: #020617;
-        border: 1px solid #00ff41;
-        border-radius: 4px;
+        border: 1px solid rgba(0, 255, 65, 0.3);
         display: none;
         flex-direction: column;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.9);
         z-index: 9999;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
     }
 
     .chat-header {
-        background: rgba(0, 255, 65, 0.1);
+        background: #0f172a;
         color: #00ff41;
-        padding: 12px;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+        padding: 10px 15px;
+        font-family: monospace;
+        font-size: 0.7rem;
+        border-bottom: 1px solid rgba(0, 255, 65, 0.1);
         display: flex;
         justify-content: space-between;
     }
@@ -163,41 +182,20 @@
         flex-direction: column;
         gap: 12px;
         text-align: left;
-    }
-
-    .msg { padding: 8px 12px; border-radius: 2px; line-height: 1.4; }
-    .bot-msg { color: #00ff41; border-left: 2px solid #00ff41; background: rgba(0, 255, 65, 0.05); }
-    .user-msg { color: #ffffff; background: rgba(255,255,255,0.05); align-self: flex-end; }
-
-    .chat-input-area {
-        padding: 15px;
-        background: rgba(0,0,0,0.3);
-        display: flex;
-        gap: 8px;
-    }
-
-    #user-input {
-        flex: 1;
-        background: transparent;
-        border: 1px solid rgba(0, 255, 65, 0.3);
-        color: #00ff41;
-        padding: 8px;
-        font-family: 'Courier New', monospace;
+        background: #020617;
     }
 
     @keyframes fadeInUp {
         to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Portfolio Image Fix */
     .profile-img {
-        width: 180px;
-        height: 180px;
+        width: 150px;
+        height: 150px;
         object-fit: cover;
-        border-radius: 4px;
-        border: 1px solid #00ff41;
-        filter: grayscale(20%);
-        margin-bottom: 25px;
+        border: 1px solid rgba(0, 255, 65, 0.3);
+        padding: 5px;
+        margin-bottom: 30px;
     }
 </style>
 
@@ -211,73 +209,73 @@
     </nav>
 
     <div class="it-container">
-        <div style="margin-bottom: 100px;">
-            <a href="https://canva.link/60u4gflbji626jm" style="border: 1px solid #00ff41; color:#00ff41; padding: 12px 35px; text-decoration:none; font-weight:bold; font-size: 0.7rem; letter-spacing: 2px; transition: 0.3s;">DOWNLOAD_CV.EXE</a>
+        <div style="margin-bottom: 120px;">
+            <a href="https://canva.link/60u4gflbji626jm" class="btn-terminal">INITIALIZE_CV_DOWNLOAD</a>
         </div>
 
         <section id="about" class="section-header">
-            <h2>ABOUT_ME</h2>
+            <h2>System_User</h2>
             <div class="glass-card" style="display: flex; flex-direction: column; align-items: center;">
                 <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/img_20260421_155321_2752969142916371420451.png?w=1024" class="profile-img">
-                <p style="max-width: 700px; color: #94a3b8; line-height: 1.8;">
+                <p style="max-width: 650px; color: #94a3b8; line-height: 2; font-size: 0.95rem;">
                     I am <strong>Kenneth Espinosa</strong>, a 20-year-old BSIT student at Central Philippine State University. 
                     Specializing in information systems and digital logic, I focus on transforming complex problems into 
-                    efficient, scalable code.
+                    efficient, scalable code solutions.
                 </p>
             </div>
         </section>
 
         <section id="projects" class="section-header">
-            <h2>DEPLOYED_PROJECTS</h2>
-            <div class="wp-block-columns" style="gap: 30px;">
+            <h2>Archive_Projects</h2>
+            <div class="wp-block-columns" style="gap: 25px;">
                 <div class="wp-block-column glass-card">
-                    <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/messenger_creation_dff2028d-b696-4233-bc6f-417f0cc5a2064556441811294128454.png?w=654" style="width: 100%; border: 1px solid rgba(255,255,255,0.1);">
-                    <h4 style="margin-top:20px; color:#00ff41; letter-spacing: 1px;">01_DIGITAL_CHESSBOARD</h4>
+                    <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/messenger_creation_dff2028d-b696-4233-bc6f-417f0cc5a2064556441811294128454.png?w=654" style="width: 100%; filter: brightness(0.8);">
+                    <h4 style="margin-top:25px; color:#00ff41; font-size: 0.8rem; letter-spacing: 2px;">V1.0_DIGITAL_CHESS</h4>
                 </div>
                 <div class="wp-block-column glass-card">
-                    <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/img_20260408_160039_2431949334295796665429.jpg?w=768" style="width: 100%; border: 1px solid rgba(255,255,255,0.1);">
-                    <h4 style="margin-top:20px; color:#00ff41; letter-spacing: 1px;">02_HOOP_VENDING_SYS</h4>
+                    <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/img_20260408_160039_2431949334295796665429.jpg?w=768" style="width: 100%; filter: brightness(0.8);">
+                    <h4 style="margin-top:25px; color:#00ff41; font-size: 0.8rem; letter-spacing: 2px;">V2.1_HOOP_VENDING</h4>
                 </div>
             </div>
         </section>
 
         <section id="skills" class="section-header">
-            <h2>TECH_STACK</h2>
-            <div class="wp-block-columns glass-card" style="display: flex; justify-content: space-around;">
-                <div class="wp-block-column">
-                    <h4 style="color:#00ff41; font-size: 0.9rem;">[ BACKEND ]</h4>
-                    <p style="color: #94a3b8; font-family: monospace;">Java // C++</p>
+            <h2>Primary_Stack</h2>
+            <div class="glass-card" style="display: flex; justify-content: space-around; background: rgba(0, 255, 65, 0.02);">
+                <div>
+                    <h4 style="color:#00ff41; font-size: 0.7rem; letter-spacing: 2px;">CORE_BACKEND</h4>
+                    <p style="color: #f1f5f9; font-family: monospace;">JAVA // C++</p>
                 </div>
-                <div class="wp-block-column">
-                    <h4 style="color:#00ff41; font-size: 0.9rem;">[ FRONTEND ]</h4>
-                    <p style="color: #94a3b8; font-family: monospace;">HTML5 // CSS3</p>
+                <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
+                <div>
+                    <h4 style="color:#00ff41; font-size: 0.7rem; letter-spacing: 2px;">UI_INTERFACE</h4>
+                    <p style="color: #f1f5f9; font-family: monospace;">HTML5 // CSS3</p>
                 </div>
             </div>
         </section>
 
         <section id="contact" class="section-header" style="padding-bottom: 100px;">
-            <h2>SECURE_COMMUNICATION</h2>
+            <h2>Contact_Port</h2>
             <div class="glass-card">
-                <p style="color: #94a3b8;">EMAIL: <span style="color:#fff">kennethespinosa032@gmail.com</span></p>
-                <p style="color: #94a3b8;">TEL: <span style="color:#fff">0916 544 5201</span></p>
-                <p style="color: #94a3b8;">LOCATION: <span style="color:#fff">Negros Occidental, PH</span></p>
+                <p style="color: #94a3b8; font-size: 0.9rem;">ENCRYPTED_MAIL: <span style="color:#fff">kennethespinosa032@gmail.com</span></p>
+                <p style="color: #94a3b8; font-size: 0.9rem;">OFFICIAL_TEL: <span style="color:#fff">0916 544 5201</span></p>
             </div>
         </section>
     </div>
 
     <div id="bot-launcher" onclick="toggleChat()">
-        <span style="font-family: monospace; font-weight: bold; font-size: 20px;">>_</span>
+        <span style="font-family: monospace; font-weight: bold; font-size: 18px; color: #020617;">>_</span>
     </div>
     <div id="chat-window">
         <div class="chat-header">
-            <span>Core_AI_v1.0</span>
-            <span onclick="toggleChat()" style="cursor:pointer">CLOSE</span>
+            <span>TERMINAL_AI_ASSISTANT</span>
+            <span onclick="toggleChat()" style="cursor:pointer; color: #ef4444;">[X]</span>
         </div>
         <div class="chat-messages" id="chat-msgs">
-            <div class="msg bot-msg">Initializing... Connection established. How can I assist you, user?</div>
+            <div class="msg bot-msg">Ready for input. Type 'help' to see available commands.</div>
         </div>
-        <div class="chat-input-area">
-            <input type="text" id="user-input" placeholder="Type command..." onkeypress="handleKey(event)">
+        <div class="chat-input-area" style="padding: 10px; background: #0f172a; display: flex; border-top: 1px solid rgba(0,255,65,0.1);">
+            <input type="text" id="user-input" placeholder="Enter command..." onkeypress="handleKey(event)" style="flex:1; background:transparent; border:none; color:#00ff41; font-family:monospace; outline:none;">
         </div>
     </div>
 </div>
@@ -299,22 +297,15 @@
         input.value = '';
 
         setTimeout(() => {
-            let reply = "ERR: Unknown command. Use 'help' for options.";
-            
-            if (text.includes('help')) {
-                reply = "AVAIL_CMDS: 'skills', 'projects', 'about', 'contact'.";
-            } else if (text.includes('skills')) {
-                reply = "STACK: Java, C++, HTML, CSS.";
-            } else if (text.includes('projects')) {
-                reply = "DB_FETCH: Chessboard v1.2, Mini Hoop Vending v1.0.";
-            } else if (text.includes('about')) {
-                reply = "SUBJECT: Kenneth Espinosa. ROLE: BSIT Student. LOCATION: CPSU.";
-            } else if (text.includes('contact')) {
-                reply = "MAIL: kennethespinosa032@gmail.com";
-            }
+            let reply = "STDOUT: Command not found. Try 'help'.";
+            if (text === 'help') reply = "CMDS: 'about', 'skills', 'projects', 'contact'.";
+            else if (text === 'about') reply = "User: Kenneth Espinosa. Status: BSIT Student at CPSU.";
+            else if (text === 'skills') reply = "Backend: Java, C++. Frontend: HTML, CSS.";
+            else if (text === 'projects') reply = "Database contains: Digital Chessboard, Hoop Vending Machine.";
+            else if (text === 'contact') reply = "Mail kennethespinosa032@gmail.com for inquiries.";
 
             addMsg(reply, 'bot-msg');
-        }, 500);
+        }, 400);
     }
 
     function addMsg(text, type) {

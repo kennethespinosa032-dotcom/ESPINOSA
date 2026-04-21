@@ -1,5 +1,9 @@
 <style>
     /* Professional Portfolio Styles */
+    html {
+        scroll-behavior: smooth;
+    }
+
     .prof-portfolio-container {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         color: #f8fafc;
@@ -9,6 +13,36 @@
         max-width: 900px;
         margin: 20px auto;
         line-height: 1.6;
+    }
+
+    /* --- NEW NAVIGATION MENU --- */
+    .prof-nav {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 30px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        position: sticky;
+        top: 10px;
+        z-index: 10;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .prof-nav a {
+        color: #38bdf8;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: color 0.3s ease;
+    }
+
+    .prof-nav a:hover {
+        color: #f8fafc;
     }
 
     .prof-header {
@@ -26,6 +60,7 @@
         text-transform: uppercase;
         border-bottom: 1px solid #334155;
         padding-bottom: 10px;
+        scroll-margin-top: 80px; /* Prevents title from being hidden under nav */
     }
 
     .prof-card {
@@ -179,7 +214,16 @@
 </style>
 
 <div class="prof-portfolio-container">
-    <div class="prof-header">
+    
+    <nav class="prof-nav">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#certificates">Certificates</a>
+        <a href="#contacts">Contacts</a>
+    </nav>
+
+    <div class="prof-header" id="about">
         <a href="https://canva.link/60u4gflbji626jm" class="prof-link">View Graphic Resume</a>
         <h2 class="prof-section-title">About Me</h2>
         <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/img_20260421_155321_2756147198746022741277.png?w=1024" alt="Kenneth Espinosa" class="prof-img" style="max-width: 300px; border-radius: 50%;">
@@ -188,7 +232,7 @@
         <p style="font-size: 0.95rem; color: #cbd5e1;">From La Castellana, Negros Occidental. Dedicated to building innovative digital solutions and exploring the intersection of technology and design.</p>
     </div>
 
-    <h2 class="prof-section-title">Projects</h2>
+    <h2 class="prof-section-title" id="projects">Projects</h2>
     
     <div class="prof-card">
         <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/messenger_creation_dff2028d-b696-4233-bc6f-417f0cc5a2068569528620364012555.png?w=654" alt="Chessboard" class="prof-img">
@@ -205,7 +249,7 @@
         <p><a href="https://www.figma.com/proto/xQaAgGw9F1WD87YAc7Csua/Untitled" class="prof-link">View E-Commerce Prototype</a></p>
     </div>
 
-    <h2 class="prof-section-title">Technical Skills</h2>
+    <h2 class="prof-section-title" id="skills">Technical Skills</h2>
     <div class="prof-skills-grid">
         <span class="skill-tag">Java</span>
         <span class="skill-tag">C++</span>
@@ -213,12 +257,12 @@
         <span class="skill-tag">CSS</span>
     </div>
 
-    <h2 class="prof-section-title">Certifications</h2>
+    <h2 class="prof-section-title" id="certificates">Certifications</h2>
     <div class="prof-card">
         <img src="https://kenneth9542.wordpress.com/wp-content/uploads/2026/04/img_20260420_230959_0896132015911634821955.jpeg?w=940" alt="Certificate" class="prof-img">
     </div>
 
-    <h2 class="prof-section-title">Connect With Me</h2>
+    <h2 class="prof-section-title" id="contacts">Connect With Me</h2>
     <div class="prof-contact">
         <p>📧 Email: kennethespinosa032@gmail.com</p>
         <p>📞 Phone: 09165445201</p>

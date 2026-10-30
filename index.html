@@ -3,469 +3,761 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Fan & Lumpia POS System</title>
+    <title>Stall POS System - Lumpia & Mini Fans</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #2563eb;
-            --success: #16a34a;
-            --danger: #dc2626;
-            --background: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--background);
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        header h1 {
-            font-size: 1.5rem;
-        }
-
-        .container {
-            display: flex;
-            flex: 1;
-            padding: 20px;
-            gap: 20px;
-            overflow: hidden;
-        }
-
-        /* Products Section */
-        .products-section {
-            flex: 2;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .section-title {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .product-card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            cursor: pointer;
-            transition: transform 0.1s, box-shadow 0.1s;
-            border: 1px solid #e2e8f0;
-        }
-
-        .product-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border-color: var(--primary);
-        }
-
-        .product-name {
-            font-weight: 600;
-            font-size: 1rem;
-            margin-bottom: 8px;
-        }
-
-        .product-price {
-            color: var(--primary);
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .product-stock {
-            font-size: 0.85rem;
-            color: #64748b;
-        }
-
-        /* Cart / Checkout Section */
-        .cart-section {
-            flex: 1;
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #e2e8f0;
-        }
-
-        .cart-items {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 10px;
-        }
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-        }
-
-        .cart-item-details {
-            flex: 1;
-        }
-
-        .cart-item-controls button {
-            background: #e2e8f0;
-            border: none;
-            padding: 2px 8px;
-            cursor: pointer;
-            font-weight: bold;
-            border-radius: 4px;
-        }
-
-        .cart-item-controls button:hover {
-            background: #cbd5e1;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-
-        .summary-row.total {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--text);
-            border-top: 1px solid #e2e8f0;
-            padding-top: 10px;
-        }
-
-        .payment-box {
-            margin-bottom: 15px;
-        }
-
-        .payment-box label {
-            display: block;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
-        .payment-box input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-
-        .btn-checkout {
-            background-color: var(--success);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.2s;
-        }
-
-        .btn-checkout:hover {
-            background-color: #15803d;
-        }
-
-        .btn-checkout:disabled {
-            background-color: #94a3b8;
-            cursor: not-allowed;
-        }
-
-        /* Sales Dashboard info in header */
-        .sales-badge {
-            background: rgba(255,255,255,0.2);
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            width: 320px;
-            text-align: center;
-        }
-
-        .modal-content h2 { margin-bottom: 15px; color: var(--success); }
-        .receipt-details { text-align: left; margin-bottom: 15px; font-size: 0.9rem; line-height: 1.5; }
-        .btn-close { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%; }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-    <header>
-        <h1>⚡ Mini Fan & Lumpia POS</h1>
-        <div class="sales-badge" id="dailySalesDisplay">Today's Sales: ₱0.00</div>
+    <!-- Header -->
+    <header class="bg-emerald-700 text-white shadow-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white text-emerald-700 p-2 rounded-xl shadow">
+                    <i class="fa-solid fa-store text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight">Kiosk & Stall POS</h1>
+                    <p class="text-xs text-emerald-100">Vegetable Lumpia & Mini Fan Hub</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3 mt-2 sm:mt-0">
+                <button onclick="switchTab('pos')" id="btn-tab-pos" class="bg-emerald-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-emerald-900 shadow-sm">
+                    <i class="fa-solid fa-cash-register mr-1"></i> POS Register
+                </button>
+                <button onclick="switchTab('dashboard')" id="btn-tab-dashboard" class="bg-emerald-600 text-emerald-100 px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-emerald-800 hover:text-white">
+                    <i class="fa-solid fa-chart-line mr-1"></i> Dashboard & Analytics
+                </button>
+            </div>
+        </div>
     </header>
 
-    <div class="container">
-        <!-- Products Grid -->
-        <div class="products-section">
-            <div class="section-title">Products Menu</div>
-            <div class="product-grid" id="productGrid">
-                <!-- Populated by JavaScript -->
-            </div>
-        </div>
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <!-- Cart & Checkout -->
-        <div class="cart-section">
-            <div class="section-title">Current Order</div>
-            <div class="cart-items" id="cartItems">
-                <p style="color: #94a3b8; text-align: center; margin-top: 20px;">Cart is empty</p>
-            </div>
-
-            <div class="summary-row">
-                <span>Subtotal:</span>
-                <span id="subtotalDisplay">₱0.00</span>
-            </div>
-
-            <div class="payment-box">
-                <label for="cashInput">Cash Payment (₱)</label>
-                <input type="number" id="cashInput" placeholder="0.00" oninput="calculateChange()">
-            </div>
-
-            <div class="summary-row">
-                <span>Change:</span>
-                <span id="changeDisplay" style="font-weight: bold; color: var(--success);">₱0.00</span>
-            </div>
-
-            <div class="summary-row total">
-                <span>Total:</span>
-                <span id="totalDisplay">₱0.00</span>
-            </div>
-
-            <button class="btn-checkout" id="checkoutBtn" onclick="processCheckout()" disabled>Complete Transaction</button>
-        </div>
-    </div>
-
-    <!-- Receipt Modal -->
-    <div class="modal" id="receiptModal">
-        <div class="modal-content">
-            <h2>Transaction Successful!</h2>
-            <div class="receipt-details" id="receiptContent">
-                <!-- Receipt info goes here -->
-            </div>
-            <button class="btn-close" onclick="closeModal()">New Transaction</button>
-        </div>
-    </div>
-
-    <script>
-        // Inventory Data
-        let products = [
-            { id: 1, name: "Mini Fan (Standard)", price: 250, stock: 20 },
-            { id: 2, name: "Mini Fan (Handheld Rechargeable)", price: 350, stock: 15 },
-            { id: 3, name: "Lumpia Shanghai (10 pcs)", price: 100, stock: 30 },
-            { id: 4, name: "Lumpia Vegetable (10 pcs)", price: 80, stock: 25 }
-        ];
-
-        let cart = [];
-        let dailySales = 0;
-
-        function initPOS() {
-            renderProducts();
-        }
-
-        function renderProducts() {
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = '';
-            products.forEach(p => {
-                grid.innerHTML += `
-                    <div class="product-card" onclick="addToCart(${p.id})">
-                        <div class="product-name">${p.name}</div>
-                        <div class="product-price">₱${p.price.toFixed(2)}</div>
-                        <div class="product-stock">Stock: ${p.stock}</div>
+        <!-- POS VIEW -->
+        <div id="view-pos" class="lg:col-span-3 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Products Section (2 Columns on large screens) -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Quick Notice / Financial Overview Banner -->
+                <div class="bg-gradient-to-r from-amber-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h2 class="text-xl font-bold">Active Stall Inventory & Capital</h2>
+                            <p class="text-sm opacity-90">Track initial capital investment vs expected revenue targets.</p>
+                        </div>
+                        <div class="flex gap-4 bg-black/20 p-3 rounded-xl backdrop-blur-sm text-xs sm:text-sm">
+                            <div>
+                                <span class="block opacity-75">Total Capital</span>
+                                <span class="font-bold text-base">₱1,000.00</span>
+                            </div>
+                            <div class="border-l border-white/20 pl-4">
+                                <span class="block opacity-75">Target Revenue</span>
+                                <span class="font-bold text-base">₱2,200.00</span>
+                            </div>
+                        </div>
                     </div>
-                `;
-            });
+                </div>
+
+                <!-- Product Catalog Header -->
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-slate-800">Select Products</h3>
+                    <span class="text-xs text-slate-500 bg-slate-200 px-3 py-1 rounded-full font-medium">2 Items Available</span>
+                </div>
+
+                <!-- Product Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    
+                    <!-- Product 1: Vegetable Lumpia -->
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="bg-amber-100 text-amber-700 p-3 rounded-xl">
+                                    <i class="fa-solid fa-utensils text-2xl"></i>
+                                </div>
+                                <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full">₱5.00 / pc</span>
+                            </div>
+                            <h4 class="font-bold text-lg text-slate-800">Vegetable Lumpia</h4>
+                            <p class="text-xs text-slate-500 mt-1">Crispy fried spring rolls packed with fresh savory vegetables.</p>
+                            
+                            <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs text-slate-600">
+                                <div class="bg-slate-50 p-2 rounded-lg">
+                                    <span class="block text-slate-400">Capital</span>
+                                    <span class="font-semibold text-slate-700">₱500.00</span>
+                                </div>
+                                <div class="bg-slate-50 p-2 rounded-lg">
+                                    <span class="block text-slate-400">Target Sales</span>
+                                    <span class="font-semibold text-emerald-600">₱1,000.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 pt-3 flex items-center justify-between">
+                            <div class="flex items-center space-x-2 border border-slate-200 rounded-xl p-1 bg-slate-50">
+                                <button onclick="adjustQty('lumpia', -1)" class="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-slate-600 hover:bg-slate-100 font-bold">-</button>
+                                <span id="qty-lumpia" class="w-8 text-center font-bold text-sm">1</span>
+                                <button onclick="adjustQty('lumpia', 1)" class="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-slate-600 hover:bg-slate-100 font-bold">+</button>
+                            </div>
+                            <button onclick="addToCart('lumpia')" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2.5 rounded-xl font-medium text-sm shadow-sm transition flex items-center space-x-2">
+                                <i class="fa-solid fa-cart-plus"></i>
+                                <span>Add</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Product 2: Mini Fan -->
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="bg-sky-100 text-sky-700 p-3 rounded-xl">
+                                    <i class="fa-solid fa-fan text-2xl"></i>
+                                </div>
+                                <div class="flex items-center space-x-1">
+                                    <span class="text-xs text-slate-400">Price:</span>
+                                    <input type="number" id="price-minifan" value="120" min="50" class="w-16 text-right font-bold text-xs bg-slate-100 border border-slate-200 rounded px-1.5 py-0.5 text-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-500" onchange="updateMiniFanPrice(this.value)">
+                                    <span class="text-xs text-slate-600 font-bold">₱</span>
+                                </div>
+                            </div>
+                            <h4 class="font-bold text-lg text-slate-800">Mini Portable Fan</h4>
+                            <p class="text-xs text-slate-500 mt-1">Handheld rechargeable mini cooling fan for hot days.</p>
+                            
+                            <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs text-slate-600">
+                                <div class="bg-slate-50 p-2 rounded-lg">
+                                    <span class="block text-slate-400">Capital</span>
+                                    <span class="font-semibold text-slate-700">₱500.00</span>
+                                </div>
+                                <div class="bg-slate-50 p-2 rounded-lg">
+                                    <span class="block text-slate-400">Target Sales</span>
+                                    <span class="font-semibold text-emerald-600">₱1,200.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 pt-3 flex items-center justify-between">
+                            <div class="flex items-center space-x-2 border border-slate-200 rounded-xl p-1 bg-slate-50">
+                                <button onclick="adjustQty('minifan', -1)" class="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-slate-600 hover:bg-slate-100 font-bold">-</button>
+                                <span id="qty-minifan" class="w-8 text-center font-bold text-sm">1</span>
+                                <button onclick="adjustQty('minifan', 1)" class="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-slate-600 hover:bg-slate-100 font-bold">+</button>
+                            </div>
+                            <button onclick="addToCart('minifan')" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm shadow-sm transition flex items-center space-x-2">
+                                <i class="fa-solid fa-cart-plus"></i>
+                                <span>Add</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Cart Section -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col h-full justify-between">
+                <div>
+                    <div class="flex justify-between items-center pb-4 border-b border-slate-100">
+                        <h3 class="font-bold text-slate-800 text-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-basket-shopping text-emerald-600"></i>
+                            <span>Current Order</span>
+                        </h3>
+                        <button onclick="clearCart()" class="text-xs text-rose-500 hover:text-rose-700 font-medium">Clear All</button>
+                    </div>
+
+                    <!-- Cart Item List -->
+                    <div id="cart-items" class="divide-y divide-slate-100 max-h-[300px] overflow-y-auto my-3">
+                        <div class="py-8 text-center text-slate-400 text-sm">
+                            <i class="fa-solid fa-cart-shopping text-3xl mb-2 block opacity-40"></i>
+                            Cart is empty. Select items to sell.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cart Totals & Checkout -->
+                <div class="pt-4 border-t border-slate-100 space-y-3">
+                    <div class="space-y-1.5 text-sm">
+                        <div class="flex justify-between text-slate-500">
+                            <span>Subtotal</span>
+                            <span id="cart-subtotal">₱0.00</span>
+                        </div>
+                        <div class="flex justify-between text-slate-500">
+                            <span>Estimated Profit</span>
+                            <span id="cart-est-profit" class="text-emerald-600 font-semibold">₱0.00</span>
+                        </div>
+                        <div class="flex justify-between text-slate-800 font-bold text-base pt-2 border-t border-dashed border-slate-200">
+                            <span>Total Amount</span>
+                            <span id="cart-total" class="text-emerald-700">₱0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-xs font-medium text-slate-600">Cash Tendered (₱)</label>
+                        <input type="number" id="cash-tendered" placeholder="Enter cash amount" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500" oninput="calculateChange()">
+                        <div class="flex justify-between text-xs text-slate-500 px-1">
+                            <span>Change:</span>
+                            <span id="cash-change" class="font-bold text-slate-700">₱0.00</span>
+                        </div>
+                    </div>
+
+                    <button onclick="openCheckoutModal()" id="btn-checkout" disabled class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400 text-white font-semibold py-3 rounded-xl shadow transition text-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-check-circle"></i>
+                        <span>Complete Transaction</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- DASHBOARD VIEW -->
+        <div id="view-dashboard" class="lg:col-span-3 hidden space-y-6">
+            
+            <!-- Summary Stat Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Revenue</span>
+                            <h3 id="dash-total-revenue" class="text-2xl font-bold text-slate-800 mt-1">₱0.00</h3>
+                        </div>
+                        <div class="bg-emerald-100 text-emerald-700 p-3 rounded-xl">
+                            <i class="fa-solid fa-peso-sign text-lg"></i>
+                        </div>
+                    </div>
+                    <span class="text-xs text-emerald-600 font-medium mt-3 inline-block"><i class="fa-solid fa-arrow-trend-up"></i> Lifetime Sales</span>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Capital Outlay</span>
+                            <h3 class="text-2xl font-bold text-slate-800 mt-1">₱1,000.00</h3>
+                        </div>
+                        <div class="bg-amber-100 text-amber-700 p-3 rounded-xl">
+                            <i class="fa-solid fa-wallet text-lg"></i>
+                        </div>
+                    </div>
+                    <span class="text-xs text-slate-500 font-medium mt-3 inline-block">Lumpia (₱500) + Fans (₱500)</span>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Net Profit</span>
+                            <h3 id="dash-net-profit" class="text-2xl font-bold text-emerald-600 mt-1">₱0.00</h3>
+                        </div>
+                        <div class="bg-sky-100 text-sky-700 p-3 rounded-xl">
+                            <i class="fa-solid fa-chart-pie text-lg"></i>
+                        </div>
+                    </div>
+                    <span class="text-xs text-sky-600 font-medium mt-3 inline-block">Revenue minus Capital</span>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Transactions Made</span>
+                            <h3 id="dash-total-tx" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
+                        </div>
+                        <div class="bg-purple-100 text-purple-700 p-3 rounded-xl">
+                            <i class="fa-solid fa-receipt text-lg"></i>
+                        </div>
+                    </div>
+                    <span class="text-xs text-purple-600 font-medium mt-3 inline-block">Successful Checkouts</span>
+                </div>
+            </div>
+
+            <!-- Detailed Item Performance -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Lumpia Performance -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-amber-100 text-amber-700 p-2.5 rounded-xl">
+                                <i class="fa-solid fa-utensils"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Vegetable Lumpia Stats</h4>
+                                <p class="text-xs text-slate-400">₱5.00 fixed price per piece</p>
+                            </div>
+                        </div>
+                        <span class="text-xs bg-amber-50 text-amber-700 font-semibold px-3 py-1 rounded-full">Target: ₱1,000</span>
+                    </div>
+
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-500">Units Sold:</span>
+                            <span id="stat-lumpia-qty" class="font-bold text-slate-800">0 pcs</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-500">Total Revenue Generated:</span>
+                            <span id="stat-lumpia-rev" class="font-bold text-emerald-600">₱0.00</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-500">Capital Allocated:</span>
+                            <span class="font-semibold text-slate-700">₱500.00</span>
+                        </div>
+                        <div class="flex justify-between py-2">
+                            <span class="text-slate-500">Gross Profit:</span>
+                            <span id="stat-lumpia-profit" class="font-bold text-emerald-700">₱-500.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mini Fan Performance -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-sky-100 text-sky-700 p-2.5 rounded-xl">
+                                <i class="fa-solid fa-fan"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Mini Portable Fan Stats</h4>
+                                <p class="text-xs text-slate-400">Target Revenue: ₱1,200</p>
+                            </div>
+                        </div>
+                        <span class="text-xs bg-sky-50 text-sky-700 font-semibold px-3 py-1 rounded-full">Current Unit Price: <span id="lbl-current-fan-price">120</span>₱</span>
+                    </div>
+
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-500">Units Sold:</span>
+                            <span id="stat-fan-qty" class="font-bold text-slate-800">0 pcs</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-500">Total Revenue Generated:</span>
+                            <span id="stat-fan-rev" class="font-bold text-emerald-600">₱0.00</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-500">Capital Allocated:</span>
+                            <span class="font-semibold text-slate-700">₱500.00</span>
+                        </div>
+                        <div class="flex justify-between py-2">
+                            <span class="text-slate-500">Gross Profit:</span>
+                            <span id="stat-fan-profit" class="font-bold text-emerald-700">₱-500.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction History Log -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="font-bold text-slate-800 text-lg">Transaction History Log</h4>
+                    <button onclick="resetData()" class="text-xs bg-rose-50 text-rose-600 hover:bg-rose-100 font-medium px-3 py-1.5 rounded-lg transition">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Reset All Data
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-400 text-xs uppercase tracking-wider">
+                                <th class="p-3 font-semibold rounded-l-lg">Tx ID</th>
+                                <th class="p-3 font-semibold">Time</th>
+                                <th class="p-3 font-semibold">Items Purchased</th>
+                                <th class="p-3 font-semibold">Total Amount</th>
+                                <th class="p-3 font-semibold rounded-r-lg">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transaction-log-body" class="divide-y divide-slate-100">
+                            <tr>
+                                <td colspan="5" class="p-6 text-center text-slate-400">No transactions recorded yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Receipt / Checkout Modal -->
+    <div id="receipt-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-scaleUp">
+            <div class="text-center pb-3 border-b border-slate-100">
+                <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-2 text-xl">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 class="font-bold text-lg text-slate-800">Transaction Successful!</h3>
+                <p class="text-xs text-slate-500">Official receipt generated for customer stall purchase.</p>
+            </div>
+
+            <!-- Printable Receipt Area -->
+            <div id="receipt-content" class="bg-slate-50 p-4 rounded-2xl font-mono text-xs space-y-3 border border-slate-200 text-slate-700">
+                <div class="text-center space-y-0.5">
+                    <p class="font-bold text-sm text-slate-900">STALL KIOSK EXPRESS</p>
+                    <p class="text-[10px] text-slate-500">Vegetable Lumpia & Mini Fan Outlet</p>
+                    <p id="receipt-date" class="text-[10px] text-slate-400"></p>
+                </div>
+                <div class="border-t border-dashed border-slate-300 pt-2 space-y-1" id="receipt-items-list">
+                    <!-- Dynamic Items -->
+                </div>
+                <div class="border-t border-dashed border-slate-300 pt-2 space-y-1">
+                    <div class="flex justify-between font-bold">
+                        <span>TOTAL:</span>
+                        <span id="receipt-total">₱0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Cash Tendered:</span>
+                        <span id="receipt-tendered">₱0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Change:</span>
+                        <span id="receipt-change">₱0.00</span>
+                    </div>
+                </div>
+                <div class="text-center text-[10px] text-slate-400 pt-2 border-t border-dashed border-slate-300">
+                    <p>Thank you for supporting small business!</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="printReceipt()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-xs transition flex items-center justify-center space-x-1.5">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Print Receipt</span>
+                </button>
+                <button onclick="closeReceiptModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-xs transition flex items-center justify-center space-x-1.5">
+                    <i class="fa-solid fa-arrow-right"></i>
+                    <span>New Sale</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // State Management
+        let state = {
+            products: {
+                lumpia: { name: 'Vegetable Lumpia', price: 5, capital: 500, targetRev: 1000, qty: 1 },
+                minifan: { name: 'Mini Portable Fan', price: 120, capital: 500, targetRev: 1200, qty: 1 }
+            },
+            cart: [],
+            transactions: [],
+            stats: {
+                lumpiaSold: 0,
+                lumpiaRevenue: 0,
+                fanSold: 0,
+                fanRevenue: 0
+            }
+        };
+
+        // Load saved data from localStorage if available
+        function loadData() {
+            const saved = localStorage.getItem('kiosk_pos_state');
+            if (saved) {
+                try {
+                    state = JSON.parse(saved);
+                    document.getElementById('price-minifan').value = state.products.minifan.price;
+                    document.getElementById('lbl-current-fan-price').innerText = state.products.minifan.price;
+                } catch(e) { console.error(e); }
+            }
+            updateUI();
         }
 
-        function addToCart(id) {
-            const product = products.find(p => p.id === id);
-            if (product.stock <= 0) {
-                alert("Sorry, this item is out of stock!");
-                return;
-            }
+        function saveData() {
+            localStorage.setItem('kiosk_pos_state', JSON.stringify(state));
+        }
 
-            const cartItem = cart.find(item => item.id === id);
-            if (cartItem) {
-                if (cartItem.qty < product.stock) {
-                    cartItem.qty++;
-                } else {
-                    alert("Reached maximum available stock.");
-                    return;
-                }
+        // Tab Navigation
+        function switchTab(tab) {
+            const posView = document.getElementById('view-pos');
+            const dashView = document.getElementById('view-dashboard');
+            const btnPos = document.getElementById('btn-tab-pos');
+            const btnDash = document.getElementById('btn-tab-dashboard');
+
+            if (tab === 'pos') {
+                posView.classList.remove('hidden');
+                dashView.classList.add('hidden');
+                btnPos.className = "bg-emerald-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-emerald-900 shadow-sm";
+                btnDash.className = "bg-emerald-600 text-emerald-100 px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-emerald-800 hover:text-white";
             } else {
-                cart.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
+                posView.classList.add('hidden');
+                dashView.classList.remove('hidden');
+                btnDash.className = "bg-emerald-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-emerald-900 shadow-sm";
+                btnPos.className = "bg-emerald-600 text-emerald-100 px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-emerald-800 hover:text-white";
+                renderDashboard();
+            }
+        }
+
+        // Adjust Quantity in Product Grid
+        function adjustQty(productId, change) {
+            let current = state.products[productId].qty + change;
+            if (current < 1) current = 1;
+            state.products[productId].qty = current;
+            document.getElementById(`qty-${productId}`).innerText = current;
+        }
+
+        // Update Mini Fan Price
+        function updateMiniFanPrice(val) {
+            let p = parseFloat(val);
+            if (isNaN(p) || p < 1) p = 1;
+            state.products.minifan.price = p;
+            document.getElementById('lbl-current-fan-price').innerText = p;
+            saveData();
+        }
+
+        // Add to Cart
+        function addToCart(productId) {
+            const prod = state.products[productId];
+            const qtyToAdd = prod.qty;
+
+            const existingIndex = state.cart.findIndex(item => item.id === productId);
+            if (existingIndex > -1) {
+                state.cart[existingIndex].qty += qtyToAdd;
+            } else {
+                state.cart.push({
+                    id: productId,
+                    name: prod.name,
+                    price: prod.price,
+                    capital: prod.capital,
+                    targetRev: prod.targetRev,
+                    qty: qtyToAdd
+                });
             }
             updateCartUI();
         }
 
-        function changeQty(id, amount) {
-            const cartItem = cart.find(item => item.id === id);
-            const product = products.find(p => p.id === id);
-
-            if (cartItem) {
-                cartItem.qty += amount;
-                if (cartItem.qty > product.stock) {
-                    cartItem.qty = product.stock;
-                    alert("Reached maximum available stock.");
-                }
-                if (cartItem.qty <= 0) {
-                    cart = cart.filter(item => item.id !== id);
+        // Modify Item Quantity in Cart
+        function updateCartQty(productId, delta) {
+            const index = state.cart.findIndex(item => item.id === productId);
+            if (index > -1) {
+                state.cart[index].qty += delta;
+                if (state.cart[index].qty <= 0) {
+                    state.cart.splice(index, 1);
                 }
             }
             updateCartUI();
+        }
+
+        function removeFromCart(productId) {
+            state.cart = state.cart.filter(item => item.id !== productId);
+            updateCartUI();
+        }
+
+        function clearCart() {
+            state.cart = [];
+            updateCartUI();
+        }
+
+        // Calculate Cart Subtotal and Profit
+        function getCartTotals() {
+            let subtotal = 0;
+            let estCapital = 0;
+            state.cart.forEach(item => {
+                subtotal += item.price * item.qty;
+                // Pro-rata capital estimation per unit sold if needed, or total item cost proportion
+                // For simplicity, we calculate proportional capital based on standard product capital
+                let unitCapital = item.id === 'lumpia' ? (500 / 100) : (500 / 10); // e.g. 100 lumpia for 500, 10 fans for 500
+                estCapital += (item.id === 'lumpia' ? 5 : 50) * item.qty; 
+            });
+            let estProfit = subtotal - estCapital;
+            return { subtotal, estProfit };
         }
 
         function updateCartUI() {
-            const container = document.getElementById('cartItems');
-            const subtotalDisplay = document.getElementById('subtotalDisplay');
-            const totalDisplay = document.getElementById('totalDisplay');
-            const checkoutBtn = document.getElementById('checkoutBtn');
+            const container = document.getElementById('cart-items');
+            const btnCheckout = document.getElementById('btn-checkout');
 
-            if (cart.length === 0) {
-                container.innerHTML = `<p style="color: #94a3b8; text-align: center; margin-top: 20px;">Cart is empty</p>`;
-                subtotalDisplay.innerText = "₱0.00";
-                totalDisplay.innerText = "₱0.00";
-                checkoutBtn.disabled = true;
-                document.getElementById('cashInput').value = '';
-                document.getElementById('changeDisplay').innerText = "₱0.00";
-                return;
-            }
-
-            container.innerHTML = '';
-            let subtotal = 0;
-
-            cart.forEach(item => {
-                subtotal += item.price * item.qty;
-                container.innerHTML += `
-                    <div class="cart-item">
-                        <div class="cart-item-details">
-                            <div>${item.name}</div>
-                            <small>₱${item.price} x ${item.qty}</small>
-                        </div>
-                        <div class="cart-item-controls">
-                            <button onclick="changeQty(${item.id}, -1)">-</button>
-                            <span style="margin: 0 5px;">${item.qty}</span>
-                            <button onclick="changeQty(${item.id}, 1)">+</button>
-                        </div>
+            if (state.cart.length === 0) {
+                container.innerHTML = `
+                    <div class="py-8 text-center text-slate-400 text-sm">
+                        <i class="fa-solid fa-cart-shopping text-3xl mb-2 block opacity-40"></i>
+                        Cart is empty. Select items to sell.
                     </div>
                 `;
-            });
+                btnCheckout.disabled = true;
+            } else {
+                container.innerHTML = state.cart.map(item => `
+                    <div class="py-3 flex justify-between items-center">
+                        <div class="space-y-0.5">
+                            <h5 class="font-bold text-slate-800 text-sm">${item.name}</h5>
+                            <p class="text-xs text-slate-400">₱${item.price} × ${item.qty}</p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="font-bold text-slate-800 text-sm">₱${item.price * item.qty}</span>
+                            <div class="flex items-center space-x-1 border border-slate-200 rounded-lg p-0.5 bg-slate-50">
+                                <button onclick="updateCartQty('${item.id}', -1)" class="w-6 h-6 flex items-center justify-center bg-white rounded shadow-xs text-xs font-bold">-</button>
+                                <span class="w-5 text-center text-xs font-semibold">${item.qty}</span>
+                                <button onclick="updateCartQty('${item.id}', 1)" class="w-6 h-6 flex items-center justify-center bg-white rounded shadow-xs text-xs font-bold">+</button>
+                            </div>
+                            <button onclick="removeFromCart('${item.id}')" class="text-slate-300 hover:text-rose-500 text-xs">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                btnCheckout.disabled = false;
+            }
 
-            subtotalDisplay.innerText = `₱${subtotal.toFixed(2)}`;
-            totalDisplay.innerText = `₱${subtotal.toFixed(2)}`;
-            checkoutBtn.disabled = false;
+            const { subtotal, estProfit } = getCartTotals();
+            document.getElementById('cart-subtotal').innerText = `₱${subtotal.toFixed(2)}`;
+            document.getElementById('cart-est-profit').innerText = `₱${estProfit.toFixed(2)}`;
+            document.getElementById('cart-total').innerText = `₱${subtotal.toFixed(2)}`;
             calculateChange();
         }
 
         function calculateChange() {
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            const cashInput = parseFloat(document.getElementById('cashInput').value) || 0;
-            const changeDisplay = document.getElementById('changeDisplay');
-            const checkoutBtn = document.getElementById('checkoutBtn');
+            const { subtotal } = getCartTotals();
+            const cash = parseFloat(document.getElementById('cash-tendered').value) || 0;
+            const change = cash - subtotal;
+            const changeEl = document.getElementById('cash-change');
+            const btnCheckout = document.getElementById('btn-checkout');
 
-            const change = cashInput - subtotal;
-            if (change >= 0) {
-                changeDisplay.innerText = `₱${change.toFixed(2)}`;
-                changeDisplay.style.color = "var(--success)";
-                checkoutBtn.disabled = false;
+            if (change >= 0 && state.cart.length > 0) {
+                changeEl.innerText = `₱${change.toFixed(2)}`;
+                changeEl.className = "font-bold text-emerald-600";
+                btnCheckout.disabled = false;
             } else {
-                changeDisplay.innerText = `₱${change.toFixed(2)} (Insufficient)`;
-                changeDisplay.style.color = "var(--danger)";
-                checkoutBtn.disabled = true;
+                changeEl.innerText = cash > 0 ? "Insufficient Cash" : "₱0.00";
+                changeEl.className = "font-bold text-rose-500";
+                if (cash < subtotal || state.cart.length === 0) {
+                    btnCheckout.disabled = true;
+                }
             }
         }
 
-        function processCheckout() {
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            const cash = parseFloat(document.getElementById('cashInput').value) || 0;
+        let lastTransaction = null;
+
+        function openCheckoutModal() {
+            const { subtotal } = getCartTotals();
+            const cash = parseFloat(document.getElementById('cash-tendered').value) || 0;
             const change = cash - subtotal;
 
-            // Deduct stock
-            cart.forEach(cartItem => {
-                const product = products.find(p => p.id === cartItem.id);
-                if (product) {
-                    product.stock -= cartItem.qty;
+            if (cash < subtotal) return;
+
+            // Record transaction
+            const tx = {
+                id: 'TX-' + Math.floor(1000 + Math.random() * 9000),
+                date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                items: JSON.parse(JSON.stringify(state.cart)),
+                total: subtotal,
+                tendered: cash,
+                change: change
+            };
+
+            state.transactions.unshift(tx);
+            lastTransaction = tx;
+
+            // Update stats
+            state.cart.forEach(item => {
+                if (item.id === 'lumpia') {
+                    state.stats.lumpiaSold += item.qty;
+                    state.stats.lumpiaRevenue += item.price * item.qty;
+                } else if (item.id === 'minifan') {
+                    state.stats.fanSold += item.qty;
+                    state.stats.fanRevenue += item.price * item.qty;
                 }
             });
 
-            dailySales += subtotal;
-            document.getElementById('dailySalesDisplay').innerText = `Today's Sales: ₱${dailySales.toFixed(2)}`;
+            saveData();
 
-            // Build Receipt
-            let receiptHtml = `<strong>Date:</strong> ${new Date().toLocaleString()}<br><hr style="margin: 5px 0">`;
-            cart.forEach(item => {
-                receiptHtml += `${item.name} x${item.qty} - ₱${(item.price * item.qty).toFixed(2)}<br>`;
-            });
-            receiptHtml += `<hr style="margin: 5px 0">`;
-            receiptHtml += `<strong>Total:</strong> ₱${subtotal.toFixed(2)}<br>`;
-            receiptHtml += `<strong>Cash Paid:</strong> ₱${cash.toFixed(2)}<br>`;
-            receiptHtml += `<strong>Change:</strong> ₱${change.toFixed(2)}<br>`;
+            // Populate receipt modal
+            document.getElementById('receipt-date').innerText = new Date().toLocaleString();
+            document.getElementById('receipt-items-list').innerHTML = tx.items.map(i => `
+                <div class="flex justify-between">
+                    <span>${i.qty}x ${i.name} (@₱${i.price})</span>
+                    <span>₱${i.qty * i.price}</span>
+                </div>
+            `).join('');
+            document.getElementById('receipt-total').innerText = `₱${tx.total.toFixed(2)}`;
+            document.getElementById('receipt-tendered').innerText = `₱${tx.tendered.toFixed(2)}`;
+            document.getElementById('receipt-change').innerText = `₱${tx.change.toFixed(2)}`;
 
-            document.getElementById('receiptContent').innerHTML = receiptHtml;
-            document.getElementById('receiptModal').style.display = 'flex';
-        }
+            document.getElementById('receipt-modal').classList.remove('hidden');
 
-        function closeModal() {
-            document.getElementById('receiptModal').style.display = 'none';
-            cart = [];
+            // Clear cart & cash input
+            state.cart = [];
+            document.getElementById('cash-tendered').value = '';
             updateCartUI();
-            renderProducts();
         }
 
-        // Initialize App on load
-        window.onload = initPOS;
+        function closeReceiptModal() {
+            document.getElementById('receipt-modal').classList.add('hidden');
+        }
+
+        function printReceipt() {
+            window.print();
+        }
+
+        // Render Dashboard Data
+        function renderDashboard() {
+            let totalRev = state.stats.lumpiaRevenue + state.stats.fanRevenue;
+            let totalCapital = 1000; // 500 Lumpia + 500 Fan
+            let netProfit = totalRev - totalCapital;
+
+            document.getElementById('dash-total-revenue').innerText = `₱${totalRev.toFixed(2)}`;
+            document.getElementById('dash-net-profit').innerText = `₱${netProfit.toFixed(2)}`;
+            document.getElementById('dash-total-tx').innerText = state.transactions.length;
+
+            // Lumpia Stats
+            document.getElementById('stat-lumpia-qty').innerText = `${state.stats.lumpiaSold} pcs`;
+            document.getElementById('stat-lumpia-rev').innerText = `₱${state.stats.lumpiaRevenue.toFixed(2)}`;
+            let lumpiaProfit = state.stats.lumpiaRevenue - 500;
+            const lumpiaProfitEl = document.getElementById('stat-lumpia-profit');
+            lumpiaProfitEl.innerText = `₱${lumpiaProfit.toFixed(2)}`;
+            lumpiaProfitEl.className = `font-bold ${lumpiaProfit >= 0 ? 'text-emerald-700' : 'text-rose-600'}`;
+
+            // Mini Fan Stats
+            document.getElementById('stat-fan-qty').innerText = `${state.stats.fanSold} pcs`;
+            document.getElementById('stat-fan-rev').innerText = `₱${state.stats.fanRevenue.toFixed(2)}`;
+            let fanProfit = state.stats.fanRevenue - 500;
+            const fanProfitEl = document.getElementById('stat-fan-profit');
+            fanProfitEl.innerText = `₱${fanProfit.toFixed(2)}`;
+            fanProfitEl.className = `font-bold ${fanProfit >= 0 ? 'text-emerald-700' : 'text-rose-600'}`;
+
+            // Transaction Log Table
+            const tbody = document.getElementById('transaction-log-body');
+            if (state.transactions.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">No transactions recorded yet.</td></tr>`;
+            } else {
+                tbody.innerHTML = state.transactions.map(tx => `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3 font-medium text-slate-800">${tx.id}</td>
+                        <td class="p-3 text-slate-500">${tx.date}</td>
+                        <td class="p-3 text-slate-600">${tx.items.map(i => `${i.qty}x ${i.name}`).join(', ')}</td>
+                        <td class="p-3 font-bold text-emerald-700">₱${tx.total.toFixed(2)}</td>
+                        <td class="p-3">
+                            <button onclick="viewTxDetail('${tx.id}')" class="text-emerald-600 hover:text-emerald-800 text-xs font-semibold bg-emerald-50 px-2.5 py-1 rounded-lg">View</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function viewTxDetail(txId) {
+            const tx = state.transactions.find(t => t.id === txId);
+            if (!tx) return;
+            
+            document.getElementById('receipt-date').innerText = tx.id + " - " + tx.date;
+            document.getElementById('receipt-items-list').innerHTML = tx.items.map(i => `
+                <div class="flex justify-between">
+                    <span>${i.qty}x ${i.name} (@₱${i.price})</span>
+                    <span>₱${i.qty * i.price}</span>
+                </div>
+            `).join('');
+            document.getElementById('receipt-total').innerText = `₱${tx.total.toFixed(2)}`;
+            document.getElementById('receipt-tendered').innerText = `₱${tx.tendered.toFixed(2)}`;
+            document.getElementById('receipt-change').innerText = `₱${tx.change.toFixed(2)}`;
+
+            document.getElementById('receipt-modal').classList.remove('hidden');
+        }
+
+        function resetData() {
+            if (confirm("Are you sure you want to reset all sales data and transaction logs?")) {
+                localStorage.removeItem('kiosk_pos_state');
+                location.reload();
+            }
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            loadData();
+        };
     </script>
 </body>
 </html>

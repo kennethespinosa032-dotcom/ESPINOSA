@@ -1,763 +1,1479 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-slate-50">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stall POS System - Lumpia & Mini Fans</title>
-    <!-- Tailwind CSS CDN -->
+    <title>POS & Management System - Lumpia & Mini Fan</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0284c7', 600: '#0369a1', 700: '#0369a1' },
+                        emerald: { 500: '#10b981', 600: '#059669' }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        @media print {
+            body * { visibility: hidden; }
+            #printable-receipt, #printable-receipt *, #printable-statement, #printable-statement *, #printable-income, #printable-income * { visibility: visible; }
+            #printable-receipt, #printable-statement, #printable-income { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print { display: none !important; }
+        }
+        /* Custom scrollbar for POS cart */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="h-full font-sans antialiased text-slate-800 flex flex-col">
 
-    <!-- Header -->
-    <header class="bg-emerald-700 text-white shadow-md sticky top-0 z-30">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="bg-white text-emerald-700 p-2 rounded-xl shadow">
-                    <i class="fa-solid fa-store text-xl"></i>
+    <!-- LOGIN OVERLAY -->
+    <div id="login-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 border border-slate-100">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-primary-100 text-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                    <i data-lucide="store" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900">Retail POS System</h2>
+                <p class="text-slate-500 text-sm mt-1">Lumpia & Mini Fan Express Store</p>
+            </div>
+
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Username / Account</label>
+                    <select id="login-username" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-slate-50">
+                        <option value="admin">Administrator (admin)</option>
+                        <option value="cashier">Cashier (cashier)</option>
+                    </select>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-tight">Kiosk & Stall POS</h1>
-                    <p class="text-xs text-emerald-100">Vegetable Lumpia & Mini Fan Hub</p>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">PIN / Password</label>
+                    <input type="password" id="login-password" value="1234" placeholder="Enter PIN (Default: 1234)" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-slate-50">
                 </div>
-            </div>
-            <div class="flex items-center space-x-3 mt-2 sm:mt-0">
-                <button onclick="switchTab('pos')" id="btn-tab-pos" class="bg-emerald-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-emerald-900 shadow-sm">
-                    <i class="fa-solid fa-cash-register mr-1"></i> POS Register
+                <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 rounded-xl shadow-lg shadow-primary-500/20 transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="log-in" class="w-5 h-5"></i> Login to System
                 </button>
-                <button onclick="switchTab('dashboard')" id="btn-tab-dashboard" class="bg-emerald-600 text-emerald-100 px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-emerald-800 hover:text-white">
-                    <i class="fa-solid fa-chart-line mr-1"></i> Dashboard & Analytics
-                </button>
+            </form>
+            <div class="mt-6 text-xs text-center text-slate-400">
+                Default Accounts: admin (1234) | cashier (1234)
             </div>
         </div>
-    </header>
+    </div>
 
-    <!-- Main Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- MAIN SYSTEM CONTAINER -->
+    <div id="app-container" class="flex h-screen overflow-hidden hidden">
 
-        <!-- POS VIEW -->
-        <div id="view-pos" class="lg:col-span-3 grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Products Section (2 Columns on large screens) -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Quick Notice / Financial Overview Banner -->
-                <div class="bg-gradient-to-r from-amber-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>
-                            <h2 class="text-xl font-bold">Active Stall Inventory & Capital</h2>
-                            <p class="text-sm opacity-90">Track initial capital investment vs expected revenue targets.</p>
+        <!-- SIDEBAR NAVIGATION -->
+        <aside id="sidebar" class="w-64 bg-slate-900 text-slate-300 flex flex-col flex-shrink-0 transition-all duration-300 z-30">
+            <!-- Store Info Header -->
+            <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-primary-500 text-white rounded-xl flex items-center justify-center font-bold">
+                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-white text-sm leading-tight store-name-display">Lumpia & Fan POS</h1>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Retail Suite</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current User Badge -->
+            <div class="px-5 py-3 bg-slate-800/50 border-b border-slate-800/80 flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span id="current-user-name" class="font-medium text-slate-200">Admin</span>
+                </div>
+                <span id="current-user-role" class="px-2 py-0.5 rounded bg-primary-500/20 text-primary-400 font-semibold text-[10px] uppercase">ADMIN</span>
+            </div>
+
+            <!-- Nav Links -->
+            <nav class="flex-1 overflow-y-auto p-3 space-y-1 custom-scrollbar">
+                <button onclick="switchView('dashboard')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white active-nav" data-view="dashboard">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+                </button>
+                <button onclick="switchView('pos')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white" data-view="pos">
+                    <i data-lucide="shopping-cart" class="w-4 h-4"></i> Point of Sale
+                </button>
+                <button onclick="switchView('products')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white admin-only" data-view="products">
+                    <i data-lucide="box" class="w-4 h-4"></i> Products
+                </button>
+                <button onclick="switchView('inventory')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white admin-only" data-view="inventory">
+                    <i data-lucide="warehouse" class="w-4 h-4"></i> Inventory Mgmt
+                </button>
+                <button onclick="switchView('sales')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white" data-view="sales">
+                    <i data-lucide="receipt" class="w-4 h-4"></i> Sales History
+                </button>
+                <button onclick="switchView('soa')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white admin-only" data-view="soa">
+                    <i data-lucide="file-text" class="w-4 h-4"></i> Statement of Account
+                </button>
+                <button onclick="switchView('income')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white admin-only" data-view="income">
+                    <i data-lucide="trending-up" class="w-4 h-4"></i> Income Statement
+                </button>
+                <button onclick="switchView('expenses')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white admin-only" data-view="expenses">
+                    <i data-lucide="wallet" class="w-4 h-4"></i> Expenses
+                </button>
+                <button onclick="switchView('reports')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white admin-only" data-view="reports">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Reports & Analytics
+                </button>
+                <button onclick="switchView('users')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white admin-only" data-view="users">
+                    <i data-lucide="users" class="w-4 h-4"></i> User Management
+                </button>
+                <button onclick="switchView('settings')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white admin-only" data-view="settings">
+                    <i data-lucide="settings" class="w-4 h-4"></i> Settings
+                </button>
+            </nav>
+
+            <div class="p-3 border-t border-slate-800">
+                <button onclick="logout()" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-all">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- CONTENT AREA -->
+        <main class="flex-1 bg-slate-50 flex flex-col h-screen overflow-hidden">
+            <!-- TOP BAR -->
+            <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between flex-shrink-0">
+                <div class="flex items-center gap-4">
+                    <button id="sidebar-toggle" onclick="toggleSidebar()" class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                    <h2 id="view-title" class="text-xl font-bold text-slate-800">Dashboard</h2>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div id="live-clock" class="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
+                        --:--:--
+                    </div>
+                </div>
+            </header>
+
+            <!-- DYNAMIC VIEW WRAPPER -->
+            <div class="flex-1 overflow-y-auto p-6 custom-scrollbar" id="content-container">
+
+                <!-- 1. DASHBOARD VIEW -->
+                <section id="view-dashboard" class="view-panel space-y-6">
+                    <!-- KPI Cards Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase mb-2">Sales Today</div>
+                            <div class="text-2xl font-bold text-slate-900" id="kpi-today-sales">₱0.00</div>
                         </div>
-                        <div class="flex gap-4 bg-black/20 p-3 rounded-xl backdrop-blur-sm text-xs sm:text-sm">
-                            <div>
-                                <span class="block opacity-75">Total Capital</span>
-                                <span class="font-bold text-base">₱1,000.00</span>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase mb-2">Total Revenue</div>
+                            <div class="text-2xl font-bold text-emerald-600" id="kpi-total-revenue">₱0.00</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase mb-2">Transactions</div>
+                            <div class="text-2xl font-bold text-slate-900" id="kpi-total-transactions">0</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase mb-2">Low Stock Items</div>
+                            <div class="text-2xl font-bold text-amber-600" id="kpi-low-stock">0</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase mb-2">Est. COGS</div>
+                            <div class="text-2xl font-bold text-slate-700" id="kpi-cogs">₱0.00</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase mb-2">Gross Profit</div>
+                            <div class="text-2xl font-bold text-primary-600" id="kpi-gross-profit">₱0.00</div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <i data-lucide="line-chart" class="w-5 h-5 text-primary-500"></i> Daily Sales Trend
+                            </h3>
+                            <div class="h-64"><canvas id="chart-daily-sales"></canvas></div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <i data-lucide="pie-chart" class="w-5 h-5 text-primary-500"></i> Top Products Sold
+                            </h3>
+                            <div class="h-64 flex justify-center"><canvas id="chart-top-products"></canvas></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. POINT OF SALE (POS) VIEW -->
+                <section id="view-pos" class="view-panel hidden h-full">
+                    <div class="flex flex-col lg:flex-row gap-6 h-[calc(100vh-7rem)]">
+                        <!-- Product Selection Section -->
+                        <div class="lg:w-7/12 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm p-4 overflow-hidden">
+                            <!-- Filter & Search Bar -->
+                            <div class="flex flex-col sm:flex-row gap-3 mb-4">
+                                <div class="relative flex-1">
+                                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3.5 text-slate-400"></i>
+                                    <input type="text" id="pos-search" placeholder="Search product name or ID..." oninput="renderPosProducts()" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                </div>
+                                <select id="pos-category-filter" onchange="renderPosProducts()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    <option value="ALL">All Categories</option>
+                                    <option value="Food">Food</option>
+                                    <option value="Electronics">Electronics</option>
+                                </select>
                             </div>
-                            <div class="border-l border-white/20 pl-4">
-                                <span class="block opacity-75">Target Revenue</span>
-                                <span class="font-bold text-base">₱2,200.00</span>
+
+                            <!-- Products Grid -->
+                            <div id="pos-products-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 overflow-y-auto p-1 custom-scrollbar flex-1">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Current Order / Cart Section -->
+                        <div class="lg:w-5/12 bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                                    <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                                        <i data-lucide="shopping-bag" class="w-5 h-5 text-primary-500"></i> Current Order
+                                    </h3>
+                                    <button onclick="clearCart()" class="text-xs text-rose-500 hover:text-rose-700 font-semibold flex items-center gap-1">
+                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear Cart
+                                    </button>
+                                </div>
+
+                                <!-- Customer Input Optional -->
+                                <div class="mt-3">
+                                    <input type="text" id="pos-customer-name" placeholder="Customer Name (Optional)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-primary-500">
+                                </div>
+
+                                <!-- Cart Items List -->
+                                <div id="pos-cart-items" class="mt-3 space-y-2 max-h-[30vh] overflow-y-auto custom-scrollbar pr-1">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- Cart Calculation & Payment -->
+                            <div class="border-t border-slate-200 pt-4 mt-4 space-y-3">
+                                <div class="space-y-1.5 text-sm">
+                                    <div class="flex justify-between text-slate-500">
+                                        <span>Subtotal</span>
+                                        <span id="pos-subtotal">₱0.00</span>
+                                    </div>
+                                    <div class="flex justify-between font-bold text-slate-900 text-lg pt-1 border-t border-slate-100">
+                                        <span>Total Amount</span>
+                                        <span id="pos-total" class="text-primary-600">₱0.00</span>
+                                    </div>
+                                </div>
+
+                                <!-- Cash Received -->
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 mb-1">Cash Received (₱)</label>
+                                    <input type="number" id="pos-cash-input" min="0" step="0.01" placeholder="0.00" oninput="calculatePosChange()" class="w-full text-right text-lg font-bold px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-primary-500 focus:outline-none">
+                                </div>
+
+                                <div class="flex justify-between text-sm font-semibold p-2.5 bg-slate-50 rounded-xl">
+                                    <span class="text-slate-600">Change:</span>
+                                    <span id="pos-change" class="text-emerald-600 font-bold">₱0.00</span>
+                                </div>
+
+                                <button onclick="processCheckout()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 text-base">
+                                    <i data-lucide="check-circle-2" class="w-5 h-5"></i> Complete Sale & Print
+                                </button>
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <!-- Product Catalog Header -->
-                <div class="flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-slate-800">Select Products</h3>
-                    <span class="text-xs text-slate-500 bg-slate-200 px-3 py-1 rounded-full font-medium">2 Items Available</span>
-                </div>
+                <!-- 3. PRODUCTS MANAGEMENT VIEW -->
+                <section id="view-products" class="view-panel hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-slate-800">Product List</h3>
+                        <button onclick="openProductModal()" class="bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl shadow flex items-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Add New Product
+                        </button>
+                    </div>
 
-                <!-- Product Cards Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    
-                    <!-- Product 1: Vegetable Lumpia -->
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-start mb-3">
-                                <div class="bg-amber-100 text-amber-700 p-3 rounded-xl">
-                                    <i class="fa-solid fa-utensils text-2xl"></i>
-                                </div>
-                                <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full">₱5.00 / pc</span>
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-xs">
+                                <tr>
+                                    <th class="p-4">Product ID</th>
+                                    <th class="p-4">Item</th>
+                                    <th class="p-4">Category</th>
+                                    <th class="p-4">Cost</th>
+                                    <th class="p-4">Selling Price</th>
+                                    <th class="p-4">Stock</th>
+                                    <th class="p-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body" class="divide-y divide-slate-100">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 4. INVENTORY MANAGEMENT VIEW -->
+                <section id="view-inventory" class="view-panel hidden space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                            <h4 class="text-xs font-semibold text-slate-400 uppercase">Total Items Stocked</h4>
+                            <div class="text-2xl font-bold text-slate-800" id="inv-total-stock">0</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                            <h4 class="text-xs font-semibold text-slate-400 uppercase">Low Stock Alerts</h4>
+                            <div class="text-2xl font-bold text-amber-500" id="inv-low-stock-count">0</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                            <h4 class="text-xs font-semibold text-slate-400 uppercase">Out of Stock</h4>
+                            <div class="text-2xl font-bold text-rose-500" id="inv-out-stock-count">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Stock Adjustment Form -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h4 class="font-bold text-slate-800 text-base mb-4">Stock Adjustment / Restock</h4>
+                        <form id="stock-adjust-form" onsubmit="handleStockAdjustment(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Product</label>
+                                <select id="adj-product-id" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500" required></select>
                             </div>
-                            <h4 class="font-bold text-lg text-slate-800">Vegetable Lumpia</h4>
-                            <p class="text-xs text-slate-500 mt-1">Crispy fried spring rolls packed with fresh savory vegetables.</p>
-                            
-                            <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs text-slate-600">
-                                <div class="bg-slate-50 p-2 rounded-lg">
-                                    <span class="block text-slate-400">Capital</span>
-                                    <span class="font-semibold text-slate-700">₱500.00</span>
-                                </div>
-                                <div class="bg-slate-50 p-2 rounded-lg">
-                                    <span class="block text-slate-400">Target Sales</span>
-                                    <span class="font-semibold text-emerald-600">₱1,000.00</span>
-                                </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Type</label>
+                                <select id="adj-type" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    <option value="IN">Stock In (Add)</option>
+                                    <option value="OUT">Stock Out (Deduct)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Quantity</label>
+                                <input type="number" id="adj-qty" min="1" value="1" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                            </div>
+                            <div class="flex items-end">
+                                <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2 rounded-xl text-sm transition-all">
+                                    Apply Stock Update
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Inventory Movements Log -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="p-4 border-b border-slate-100 font-bold text-slate-800">Stock Movement History</div>
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-xs">
+                                <tr>
+                                    <th class="p-4">Date & Time</th>
+                                    <th class="p-4">Product</th>
+                                    <th class="p-4">Movement</th>
+                                    <th class="p-4">Quantity</th>
+                                    <th class="p-4">Reason/Type</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-movements-tbody" class="divide-y divide-slate-100">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 5. SALES HISTORY VIEW -->
+                <section id="view-sales" class="view-panel hidden space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <input type="text" id="sales-search" placeholder="Search Receipt ID or Customer..." oninput="renderSalesHistory()" class="px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            <select id="sales-period-filter" onchange="renderSalesHistory()" class="px-4 py-2 rounded-xl border border-slate-200 text-sm bg-slate-50">
+                                <option value="ALL">All Time</option>
+                                <option value="TODAY">Today</option>
+                                <option value="WEEK">This Week</option>
+                                <option value="MONTH">This Month</option>
+                            </select>
+                        </div>
+                        <button onclick="exportSalesCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-xl flex items-center gap-2">
+                            <i data-lucide="download" class="w-4 h-4"></i> Export Sales CSV
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-xs">
+                                <tr>
+                                    <th class="p-4">Transaction ID</th>
+                                    <th class="p-4">Date & Time</th>
+                                    <th class="p-4">Items</th>
+                                    <th class="p-4">Total Amount</th>
+                                    <th class="p-4">Cash Received</th>
+                                    <th class="p-4">Change</th>
+                                    <th class="p-4 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sales-table-body" class="divide-y divide-slate-100">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 6. STATEMENT OF ACCOUNT VIEW -->
+                <section id="view-soa" class="view-panel hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-slate-800">Statement of Account Records</h3>
+                        <button onclick="exportSoaCSV()" class="bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-xl flex items-center gap-2">
+                            <i data-lucide="download" class="w-4 h-4"></i> Export SOA CSV
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-xs">
+                                <tr>
+                                    <th class="p-4">Txn ID</th>
+                                    <th class="p-4">Date</th>
+                                    <th class="p-4">Customer</th>
+                                    <th class="p-4">Subtotal</th>
+                                    <th class="p-4">Paid</th>
+                                    <th class="p-4">Status</th>
+                                    <th class="p-4 text-right">Print</th>
+                                </tr>
+                            </thead>
+                            <tbody id="soa-table-body" class="divide-y divide-slate-100">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 7. INCOME STATEMENT VIEW -->
+                <section id="view-income" class="view-panel hidden space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-3xl mx-auto space-y-6" id="printable-income">
+                        <div class="text-center pb-4 border-b border-slate-200">
+                            <h2 class="text-xl font-bold text-slate-900 store-name-display">Lumpia & Mini Fan Store</h2>
+                            <h3 class="text-sm font-semibold text-slate-600 uppercase tracking-widest mt-1">Income Statement</h3>
+                            <p class="text-xs text-slate-400 mt-1" id="income-statement-period">As of All Recorded Transactions</p>
+                        </div>
+
+                        <!-- Calculations Table -->
+                        <div class="space-y-4 text-sm">
+                            <!-- Revenue -->
+                            <div>
+                                <h4 class="font-bold text-slate-800 uppercase text-xs border-b pb-1 mb-2">Revenue</h4>
+                                <div class="flex justify-between py-1"><span>Total Gross Sales</span><span id="inc-gross-sales" class="font-medium">₱0.00</span></div>
+                                <div class="flex justify-between py-1 text-slate-500"><span>Less: Sales Discounts</span><span>₱0.00</span></div>
+                                <div class="flex justify-between py-1 font-bold text-slate-900 border-t pt-1"><span>Net Sales</span><span id="inc-net-sales">₱0.00</span></div>
+                            </div>
+
+                            <!-- Cost of Goods Sold -->
+                            <div>
+                                <h4 class="font-bold text-slate-800 uppercase text-xs border-b pb-1 mb-2">Cost of Goods Sold (COGS)</h4>
+                                <div class="flex justify-between py-1"><span>Beginning Inventory Cost</span><span id="inc-beg-inv">₱0.00</span></div>
+                                <div class="flex justify-between py-1"><span>Add: Purchases / Restocks</span><span id="inc-purchases">₱0.00</span></div>
+                                <div class="flex justify-between py-1 text-slate-500"><span>Less: Ending Inventory Cost</span><span id="inc-end-inv">(₱0.00)</span></div>
+                                <div class="flex justify-between py-1 font-bold text-slate-900 border-t pt-1"><span>Total COGS</span><span id="inc-cogs">₱0.00</span></div>
+                            </div>
+
+                            <!-- Gross Profit -->
+                            <div class="bg-slate-50 p-3 rounded-xl flex justify-between font-bold text-base border border-slate-200">
+                                <span>Gross Profit</span>
+                                <span id="inc-gross-profit" class="text-primary-600">₱0.00</span>
+                            </div>
+
+                            <!-- Expenses -->
+                            <div>
+                                <h4 class="font-bold text-slate-800 uppercase text-xs border-b pb-1 mb-2">Operating Expenses</h4>
+                                <div class="flex justify-between py-1"><span>Total Recorded Expenses</span><span id="inc-expenses">₱0.00</span></div>
+                            </div>
+
+                            <!-- Net Income -->
+                            <div class="bg-emerald-50 p-4 rounded-xl flex justify-between font-bold text-lg border border-emerald-200 text-emerald-900">
+                                <span>NET INCOME / PROFIT</span>
+                                <span id="inc-net-income">₱0.00</span>
                             </div>
                         </div>
 
-                        <div class="mt-5 pt-3 flex items-center justify-between">
-                            <div class="flex items-center space-x-2 border border-slate-200 rounded-xl p-1 bg-slate-50">
-                                <button onclick="adjustQty('lumpia', -1)" class="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-slate-600 hover:bg-slate-100 font-bold">-</button>
-                                <span id="qty-lumpia" class="w-8 text-center font-bold text-sm">1</span>
-                                <button onclick="adjustQty('lumpia', 1)" class="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-slate-600 hover:bg-slate-100 font-bold">+</button>
-                            </div>
-                            <button onclick="addToCart('lumpia')" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2.5 rounded-xl font-medium text-sm shadow-sm transition flex items-center space-x-2">
-                                <i class="fa-solid fa-cart-plus"></i>
-                                <span>Add</span>
+                        <div class="pt-4 border-t border-slate-200 flex justify-end gap-3 no-print">
+                            <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-4 py-2 rounded-xl text-sm flex items-center gap-2">
+                                <i data-lucide="printer" class="w-4 h-4"></i> Print Statement
                             </button>
                         </div>
                     </div>
+                </section>
 
-                    <!-- Product 2: Mini Fan -->
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-start mb-3">
-                                <div class="bg-sky-100 text-sky-700 p-3 rounded-xl">
-                                    <i class="fa-solid fa-fan text-2xl"></i>
+                <!-- 8. EXPENSES MANAGEMENT VIEW -->
+                <section id="view-expenses" class="view-panel hidden space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Add Expense Form -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <h4 class="font-bold text-slate-800 text-base mb-4">Record Operating Expense</h4>
+                            <form id="expense-form" onsubmit="handleAddExpense(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 mb-1">Description / Reason</label>
+                                    <input type="text" id="exp-desc" placeholder="e.g. Store Electricity, Packaging Bag" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" required>
                                 </div>
-                                <div class="flex items-center space-x-1">
-                                    <span class="text-xs text-slate-400">Price:</span>
-                                    <input type="number" id="price-minifan" value="120" min="50" class="w-16 text-right font-bold text-xs bg-slate-100 border border-slate-200 rounded px-1.5 py-0.5 text-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-500" onchange="updateMiniFanPrice(this.value)">
-                                    <span class="text-xs text-slate-600 font-bold">₱</span>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 mb-1">Category</label>
+                                    <select id="exp-category" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm bg-slate-50">
+                                        <option value="Utilities">Utilities</option>
+                                        <option value="Supplies">Supplies</option>
+                                        <option value="Rent">Rent</option>
+                                        <option value="Salaries">Salaries</option>
+                                        <option value="Other">Other</option>
+                                    </select>
                                 </div>
-                            </div>
-                            <h4 class="font-bold text-lg text-slate-800">Mini Portable Fan</h4>
-                            <p class="text-xs text-slate-500 mt-1">Handheld rechargeable mini cooling fan for hot days.</p>
-                            
-                            <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs text-slate-600">
-                                <div class="bg-slate-50 p-2 rounded-lg">
-                                    <span class="block text-slate-400">Capital</span>
-                                    <span class="font-semibold text-slate-700">₱500.00</span>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 mb-1">Amount (₱)</label>
+                                    <input type="number" id="exp-amount" min="0.01" step="0.01" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" required>
                                 </div>
-                                <div class="bg-slate-50 p-2 rounded-lg">
-                                    <span class="block text-slate-400">Target Sales</span>
-                                    <span class="font-semibold text-emerald-600">₱1,200.00</span>
-                                </div>
-                            </div>
+                                <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-2.5 rounded-xl text-sm transition-all">
+                                    Save Expense Entry
+                                </button>
+                            </form>
                         </div>
 
-                        <div class="mt-5 pt-3 flex items-center justify-between">
-                            <div class="flex items-center space-x-2 border border-slate-200 rounded-xl p-1 bg-slate-50">
-                                <button onclick="adjustQty('minifan', -1)" class="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-slate-600 hover:bg-slate-100 font-bold">-</button>
-                                <span id="qty-minifan" class="w-8 text-center font-bold text-sm">1</span>
-                                <button onclick="adjustQty('minifan', 1)" class="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-slate-600 hover:bg-slate-100 font-bold">+</button>
+                        <!-- Expenses Table -->
+                        <div class="md:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                            <div class="p-4 border-b border-slate-100 font-bold text-slate-800 flex justify-between items-center">
+                                <span>Expense History</span>
+                                <span id="total-expenses-badge" class="text-xs bg-rose-50 text-rose-600 px-2.5 py-1 rounded-full font-semibold">Total: ₱0.00</span>
                             </div>
-                            <button onclick="addToCart('minifan')" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm shadow-sm transition flex items-center space-x-2">
-                                <i class="fa-solid fa-cart-plus"></i>
-                                <span>Add</span>
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-xs">
+                                    <tr>
+                                        <th class="p-4">Date</th>
+                                        <th class="p-4">Description</th>
+                                        <th class="p-4">Category</th>
+                                        <th class="p-4">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expenses-table-body" class="divide-y divide-slate-100">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 9. REPORTS & ANALYTICS VIEW -->
+                <section id="view-reports" class="view-panel hidden space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <h4 class="font-bold text-slate-800 text-base mb-4">Revenue vs Profit</h4>
+                            <div class="h-64"><canvas id="chart-rev-profit"></canvas></div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <h4 class="font-bold text-slate-800 text-base mb-4">Sales by Category</h4>
+                            <div class="h-64 flex justify-center"><canvas id="chart-category-sales"></canvas></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 10. USER MANAGEMENT VIEW -->
+                <section id="view-users" class="view-panel hidden space-y-6">
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden max-w-2xl">
+                        <div class="p-4 border-b border-slate-100 font-bold text-slate-800">System User Accounts</div>
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-xs">
+                                <tr>
+                                    <th class="p-4">Username</th>
+                                    <th class="p-4">Role</th>
+                                    <th class="p-4">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr>
+                                    <td class="p-4 font-semibold">admin</td>
+                                    <td class="p-4"><span class="px-2 py-0.5 rounded bg-primary-100 text-primary-700 text-xs font-bold">ADMINISTRATOR</span></td>
+                                    <td class="p-4 text-emerald-600 font-medium">Active</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-semibold">cashier</td>
+                                    <td class="p-4"><span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-xs font-bold">CASHIER</span></td>
+                                    <td class="p-4 text-emerald-600 font-medium">Active</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 11. SETTINGS VIEW -->
+                <section id="view-settings" class="view-panel hidden space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-xl space-y-4">
+                        <h4 class="font-bold text-slate-800 text-base">Store Details Configuration</h4>
+                        <form id="settings-form" onsubmit="saveSettings(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Store Name</label>
+                                <input type="text" id="setting-store-name" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Currency Symbol</label>
+                                <input type="text" id="setting-currency" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                            </div>
+                            <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-medium px-5 py-2.5 rounded-xl text-sm transition-all">
+                                Save Settings
                             </button>
-                        </div>
+                        </form>
                     </div>
+                </section>
 
-                </div>
             </div>
+        </main>
+    </div>
 
-            <!-- Cart Section -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col h-full justify-between">
+    <!-- PRODUCT MODAL -->
+    <div id="product-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 border border-slate-100">
+            <h3 id="product-modal-title" class="text-lg font-bold text-slate-900 mb-4">Add Product</h3>
+            <form id="product-form" onsubmit="saveProduct(event)" class="space-y-3">
+                <input type="hidden" id="prod-id">
                 <div>
-                    <div class="flex justify-between items-center pb-4 border-b border-slate-100">
-                        <h3 class="font-bold text-slate-800 text-lg flex items-center space-x-2">
-                            <i class="fa-solid fa-basket-shopping text-emerald-600"></i>
-                            <span>Current Order</span>
-                        </h3>
-                        <button onclick="clearCart()" class="text-xs text-rose-500 hover:text-rose-700 font-medium">Clear All</button>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Product Name</label>
+                    <input type="text" id="prod-name" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Category</label>
+                    <select id="prod-category" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm bg-slate-50">
+                        <option value="Food">Food</option>
+                        <option value="Electronics">Electronics</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Cost (₱)</label>
+                        <input type="number" id="prod-cost" min="0" step="0.01" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none" required>
                     </div>
-
-                    <!-- Cart Item List -->
-                    <div id="cart-items" class="divide-y divide-slate-100 max-h-[300px] overflow-y-auto my-3">
-                        <div class="py-8 text-center text-slate-400 text-sm">
-                            <i class="fa-solid fa-cart-shopping text-3xl mb-2 block opacity-40"></i>
-                            Cart is empty. Select items to sell.
-                        </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Selling Price (₱)</label>
+                        <input type="number" id="prod-price" min="0" step="0.01" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none" required>
                     </div>
                 </div>
-
-                <!-- Cart Totals & Checkout -->
-                <div class="pt-4 border-t border-slate-100 space-y-3">
-                    <div class="space-y-1.5 text-sm">
-                        <div class="flex justify-between text-slate-500">
-                            <span>Subtotal</span>
-                            <span id="cart-subtotal">₱0.00</span>
-                        </div>
-                        <div class="flex justify-between text-slate-500">
-                            <span>Estimated Profit</span>
-                            <span id="cart-est-profit" class="text-emerald-600 font-semibold">₱0.00</span>
-                        </div>
-                        <div class="flex justify-between text-slate-800 font-bold text-base pt-2 border-t border-dashed border-slate-200">
-                            <span>Total Amount</span>
-                            <span id="cart-total" class="text-emerald-700">₱0.00</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="block text-xs font-medium text-slate-600">Cash Tendered (₱)</label>
-                        <input type="number" id="cash-tendered" placeholder="Enter cash amount" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500" oninput="calculateChange()">
-                        <div class="flex justify-between text-xs text-slate-500 px-1">
-                            <span>Change:</span>
-                            <span id="cash-change" class="font-bold text-slate-700">₱0.00</span>
-                        </div>
-                    </div>
-
-                    <button onclick="openCheckoutModal()" id="btn-checkout" disabled class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400 text-white font-semibold py-3 rounded-xl shadow transition text-sm flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-check-circle"></i>
-                        <span>Complete Transaction</span>
-                    </button>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Initial Stock</label>
+                    <input type="number" id="prod-stock" min="0" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none" required>
                 </div>
-            </div>
-
+                <div class="flex justify-end gap-2 pt-3">
+                    <button type="button" onclick="closeProductModal()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl text-sm font-medium bg-primary-600 text-white hover:bg-primary-700">Save Product</button>
+                </div>
+            </form>
         </div>
+    </div>
 
-        <!-- DASHBOARD VIEW -->
-        <div id="view-dashboard" class="lg:col-span-3 hidden space-y-6">
-            
-            <!-- Summary Stat Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Revenue</span>
-                            <h3 id="dash-total-revenue" class="text-2xl font-bold text-slate-800 mt-1">₱0.00</h3>
-                        </div>
-                        <div class="bg-emerald-100 text-emerald-700 p-3 rounded-xl">
-                            <i class="fa-solid fa-peso-sign text-lg"></i>
-                        </div>
-                    </div>
-                    <span class="text-xs text-emerald-600 font-medium mt-3 inline-block"><i class="fa-solid fa-arrow-trend-up"></i> Lifetime Sales</span>
+    <!-- RECEIPT MODAL -->
+    <div id="receipt-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-slate-100">
+            <div id="printable-receipt" class="font-mono text-xs space-y-3">
+                <div class="text-center space-y-1">
+                    <h2 class="text-base font-bold text-slate-900 store-name-display">Lumpia & Mini Fan Express</h2>
+                    <p class="text-[10px] text-slate-500">Official Sale Receipt</p>
+                    <p id="receipt-date-time" class="text-[10px] text-slate-400">Date: --</p>
+                    <p id="receipt-id" class="text-[10px] font-bold text-slate-700">Txn: --</p>
                 </div>
 
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Capital Outlay</span>
-                            <h3 class="text-2xl font-bold text-slate-800 mt-1">₱1,000.00</h3>
-                        </div>
-                        <div class="bg-amber-100 text-amber-700 p-3 rounded-xl">
-                            <i class="fa-solid fa-wallet text-lg"></i>
-                        </div>
-                    </div>
-                    <span class="text-xs text-slate-500 font-medium mt-3 inline-block">Lumpia (₱500) + Fans (₱500)</span>
+                <div class="border-b border-t border-dashed border-slate-300 py-2 space-y-1" id="receipt-items-list">
+                    <!-- Receipt items populated dynamically -->
                 </div>
 
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Net Profit</span>
-                            <h3 id="dash-net-profit" class="text-2xl font-bold text-emerald-600 mt-1">₱0.00</h3>
-                        </div>
-                        <div class="bg-sky-100 text-sky-700 p-3 rounded-xl">
-                            <i class="fa-solid fa-chart-pie text-lg"></i>
-                        </div>
-                    </div>
-                    <span class="text-xs text-sky-600 font-medium mt-3 inline-block">Revenue minus Capital</span>
-                </div>
-
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Transactions Made</span>
-                            <h3 id="dash-total-tx" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
-                        </div>
-                        <div class="bg-purple-100 text-purple-700 p-3 rounded-xl">
-                            <i class="fa-solid fa-receipt text-lg"></i>
-                        </div>
-                    </div>
-                    <span class="text-xs text-purple-600 font-medium mt-3 inline-block">Successful Checkouts</span>
-                </div>
-            </div>
-
-            <!-- Detailed Item Performance -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Lumpia Performance -->
-                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="bg-amber-100 text-amber-700 p-2.5 rounded-xl">
-                                <i class="fa-solid fa-utensils"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-slate-800">Vegetable Lumpia Stats</h4>
-                                <p class="text-xs text-slate-400">₱5.00 fixed price per piece</p>
-                            </div>
-                        </div>
-                        <span class="text-xs bg-amber-50 text-amber-700 font-semibold px-3 py-1 rounded-full">Target: ₱1,000</span>
-                    </div>
-
-                    <div class="space-y-3 text-sm">
-                        <div class="flex justify-between py-2 border-b border-slate-100">
-                            <span class="text-slate-500">Units Sold:</span>
-                            <span id="stat-lumpia-qty" class="font-bold text-slate-800">0 pcs</span>
-                        </div>
-                        <div class="flex justify-between py-2 border-b border-slate-100">
-                            <span class="text-slate-500">Total Revenue Generated:</span>
-                            <span id="stat-lumpia-rev" class="font-bold text-emerald-600">₱0.00</span>
-                        </div>
-                        <div class="flex justify-between py-2 border-b border-slate-100">
-                            <span class="text-slate-500">Capital Allocated:</span>
-                            <span class="font-semibold text-slate-700">₱500.00</span>
-                        </div>
-                        <div class="flex justify-between py-2">
-                            <span class="text-slate-500">Gross Profit:</span>
-                            <span id="stat-lumpia-profit" class="font-bold text-emerald-700">₱-500.00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mini Fan Performance -->
-                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="bg-sky-100 text-sky-700 p-2.5 rounded-xl">
-                                <i class="fa-solid fa-fan"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-slate-800">Mini Portable Fan Stats</h4>
-                                <p class="text-xs text-slate-400">Target Revenue: ₱1,200</p>
-                            </div>
-                        </div>
-                        <span class="text-xs bg-sky-50 text-sky-700 font-semibold px-3 py-1 rounded-full">Current Unit Price: <span id="lbl-current-fan-price">120</span>₱</span>
-                    </div>
-
-                    <div class="space-y-3 text-sm">
-                        <div class="flex justify-between py-2 border-b border-slate-100">
-                            <span class="text-slate-500">Units Sold:</span>
-                            <span id="stat-fan-qty" class="font-bold text-slate-800">0 pcs</span>
-                        </div>
-                        <div class="flex justify-between py-2 border-b border-slate-100">
-                            <span class="text-slate-500">Total Revenue Generated:</span>
-                            <span id="stat-fan-rev" class="font-bold text-emerald-600">₱0.00</span>
-                        </div>
-                        <div class="flex justify-between py-2 border-b border-slate-100">
-                            <span class="text-slate-500">Capital Allocated:</span>
-                            <span class="font-semibold text-slate-700">₱500.00</span>
-                        </div>
-                        <div class="flex justify-between py-2">
-                            <span class="text-slate-500">Gross Profit:</span>
-                            <span id="stat-fan-profit" class="font-bold text-emerald-700">₱-500.00</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Transaction History Log -->
-            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h4 class="font-bold text-slate-800 text-lg">Transaction History Log</h4>
-                    <button onclick="resetData()" class="text-xs bg-rose-50 text-rose-600 hover:bg-rose-100 font-medium px-3 py-1.5 rounded-lg transition">
-                        <i class="fa-solid fa-rotate-right mr-1"></i> Reset All Data
-                    </button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-400 text-xs uppercase tracking-wider">
-                                <th class="p-3 font-semibold rounded-l-lg">Tx ID</th>
-                                <th class="p-3 font-semibold">Time</th>
-                                <th class="p-3 font-semibold">Items Purchased</th>
-                                <th class="p-3 font-semibold">Total Amount</th>
-                                <th class="p-3 font-semibold rounded-r-lg">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="transaction-log-body" class="divide-y divide-slate-100">
-                            <tr>
-                                <td colspan="5" class="p-6 text-center text-slate-400">No transactions recorded yet.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
-
-    </main>
-
-    <!-- Receipt / Checkout Modal -->
-    <div id="receipt-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-scaleUp">
-            <div class="text-center pb-3 border-b border-slate-100">
-                <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-2 text-xl">
-                    <i class="fa-solid fa-check"></i>
-                </div>
-                <h3 class="font-bold text-lg text-slate-800">Transaction Successful!</h3>
-                <p class="text-xs text-slate-500">Official receipt generated for customer stall purchase.</p>
-            </div>
-
-            <!-- Printable Receipt Area -->
-            <div id="receipt-content" class="bg-slate-50 p-4 rounded-2xl font-mono text-xs space-y-3 border border-slate-200 text-slate-700">
-                <div class="text-center space-y-0.5">
-                    <p class="font-bold text-sm text-slate-900">STALL KIOSK EXPRESS</p>
-                    <p class="text-[10px] text-slate-500">Vegetable Lumpia & Mini Fan Outlet</p>
-                    <p id="receipt-date" class="text-[10px] text-slate-400"></p>
-                </div>
-                <div class="border-t border-dashed border-slate-300 pt-2 space-y-1" id="receipt-items-list">
-                    <!-- Dynamic Items -->
-                </div>
-                <div class="border-t border-dashed border-slate-300 pt-2 space-y-1">
-                    <div class="flex justify-between font-bold">
+                <div class="space-y-1 pt-1 text-right">
+                    <div class="flex justify-between font-bold text-sm">
                         <span>TOTAL:</span>
-                        <span id="receipt-total">₱0.00</span>
+                        <span id="receipt-total-val">₱0.00</span>
                     </div>
-                    <div class="flex justify-between">
-                        <span>Cash Tendered:</span>
-                        <span id="receipt-tendered">₱0.00</span>
+                    <div class="flex justify-between text-slate-600">
+                        <span>Cash Paid:</span>
+                        <span id="receipt-cash-val">₱0.00</span>
                     </div>
-                    <div class="flex justify-between">
+                    <div class="flex justify-between text-slate-600">
                         <span>Change:</span>
-                        <span id="receipt-change">₱0.00</span>
+                        <span id="receipt-change-val">₱0.00</span>
                     </div>
                 </div>
-                <div class="text-center text-[10px] text-slate-400 pt-2 border-t border-dashed border-slate-300">
-                    <p>Thank you for supporting small business!</p>
+
+                <div class="text-center pt-3 border-t border-dashed border-slate-300 text-[10px] text-slate-500">
+                    Thank you for your purchase!
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 pt-2">
-                <button onclick="printReceipt()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-xs transition flex items-center justify-center space-x-1.5">
-                    <i class="fa-solid fa-print"></i>
-                    <span>Print Receipt</span>
-                </button>
-                <button onclick="closeReceiptModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-xs transition flex items-center justify-center space-x-1.5">
-                    <i class="fa-solid fa-arrow-right"></i>
-                    <span>New Sale</span>
+            <div class="flex gap-2 mt-6 no-print">
+                <button onclick="closeReceiptModal()" class="flex-1 py-2 rounded-xl text-sm font-medium border border-slate-200 hover:bg-slate-50">Close</button>
+                <button onclick="window.print()" class="flex-1 py-2 rounded-xl text-sm font-medium bg-primary-600 text-white hover:bg-primary-700 flex items-center justify-center gap-1">
+                    <i data-lucide="printer" class="w-4 h-4"></i> Print
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript Application Logic -->
+    <!-- MAIN SYSTEM LOGIC -->
     <script>
-        // State Management
+        // --- DATA STATE INITIALIZATION ---
+        const DEFAULT_PRODUCTS = [
+            { id: 'PROD-001', name: 'Vegetable Lumpia', category: 'Food', cost: 2.50, price: 5.00, stock: 150, image: '🌱' },
+            { id: 'PROD-002', name: 'Mini Fan', category: 'Electronics', cost: 30.00, price: 50.00, stock: 45, image: '🌀' }
+        ];
+
         let state = {
-            products: {
-                lumpia: { name: 'Vegetable Lumpia', price: 5, capital: 500, targetRev: 1000, qty: 1 },
-                minifan: { name: 'Mini Portable Fan', price: 120, capital: 500, targetRev: 1200, qty: 1 }
-            },
+            currentUser: null,
+            products: JSON.parse(localStorage.getItem('pos_products')) || DEFAULT_PRODUCTS,
             cart: [],
-            transactions: [],
-            stats: {
-                lumpiaSold: 0,
-                lumpiaRevenue: 0,
-                fanSold: 0,
-                fanRevenue: 0
-            }
+            sales: JSON.parse(localStorage.getItem('pos_sales')) || [],
+            expenses: JSON.parse(localStorage.getItem('pos_expenses')) || [],
+            movements: JSON.parse(localStorage.getItem('pos_movements')) || [],
+            settings: JSON.parse(localStorage.getItem('pos_settings')) || { storeName: 'Lumpia & Mini Fan Store', currency: '₱' }
         };
 
-        // Load saved data from localStorage if available
-        function loadData() {
-            const saved = localStorage.getItem('kiosk_pos_state');
-            if (saved) {
-                try {
-                    state = JSON.parse(saved);
-                    document.getElementById('price-minifan').value = state.products.minifan.price;
-                    document.getElementById('lbl-current-fan-price').innerText = state.products.minifan.price;
-                } catch(e) { console.error(e); }
+        let charts = {};
+
+        // Save State Helper
+        function saveState() {
+            localStorage.setItem('pos_products', JSON.stringify(state.products));
+            localStorage.setItem('pos_sales', JSON.stringify(state.sales));
+            localStorage.setItem('pos_expenses', JSON.stringify(state.expenses));
+            localStorage.setItem('pos_movements', JSON.stringify(state.movements));
+            localStorage.setItem('pos_settings', JSON.stringify(state.settings));
+        }
+
+        // Clock Update
+        setInterval(() => {
+            const clockEl = document.getElementById('live-clock');
+            if (clockEl) {
+                const now = new Date();
+                clockEl.textContent = now.toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'medium' });
             }
-            updateUI();
-        }
+        }, 1000);
 
-        function saveData() {
-            localStorage.setItem('kiosk_pos_state', JSON.stringify(state));
-        }
+        // --- AUTHENTICATION ---
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('login-username').value;
+            const pass = document.getElementById('login-password').value;
 
-        // Tab Navigation
-        function switchTab(tab) {
-            const posView = document.getElementById('view-pos');
-            const dashView = document.getElementById('view-dashboard');
-            const btnPos = document.getElementById('btn-tab-pos');
-            const btnDash = document.getElementById('btn-tab-dashboard');
-
-            if (tab === 'pos') {
-                posView.classList.remove('hidden');
-                dashView.classList.add('hidden');
-                btnPos.className = "bg-emerald-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-emerald-900 shadow-sm";
-                btnDash.className = "bg-emerald-600 text-emerald-100 px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-emerald-800 hover:text-white";
+            if (pass === '1234') {
+                state.currentUser = { username: user, role: user === 'admin' ? 'ADMIN' : 'CASHIER' };
+                document.getElementById('login-modal').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+                setupUserRoleView();
+                initApp();
             } else {
-                posView.classList.add('hidden');
-                dashView.classList.remove('hidden');
-                btnDash.className = "bg-emerald-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-emerald-900 shadow-sm";
-                btnPos.className = "bg-emerald-600 text-emerald-100 px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-emerald-800 hover:text-white";
-                renderDashboard();
+                alert('Invalid Password / PIN!');
             }
+        });
+
+        function logout() {
+            state.currentUser = null;
+            document.getElementById('app-container').classList.add('hidden');
+            document.getElementById('login-modal').classList.remove('hidden');
         }
 
-        // Adjust Quantity in Product Grid
-        function adjustQty(productId, change) {
-            let current = state.products[productId].qty + change;
-            if (current < 1) current = 1;
-            state.products[productId].qty = current;
-            document.getElementById(`qty-${productId}`).innerText = current;
+        function setupUserRoleView() {
+            document.getElementById('current-user-name').textContent = state.currentUser.username;
+            document.getElementById('current-user-role').textContent = state.currentUser.role;
+
+            const adminNavs = document.querySelectorAll('.admin-only');
+            adminNavs.forEach(el => {
+                if (state.currentUser.role !== 'ADMIN') {
+                    el.classList.add('hidden');
+                } else {
+                    el.classList.remove('hidden');
+                }
+            });
+
+            // Default view based on role
+            switchView(state.currentUser.role === 'ADMIN' ? 'dashboard' : 'pos');
         }
 
-        // Update Mini Fan Price
-        function updateMiniFanPrice(val) {
-            let p = parseFloat(val);
-            if (isNaN(p) || p < 1) p = 1;
-            state.products.minifan.price = p;
-            document.getElementById('lbl-current-fan-price').innerText = p;
-            saveData();
+        // --- NAVIGATION ---
+        function switchView(viewId) {
+            document.querySelectorAll('.view-panel').forEach(panel => panel.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-slate-800', 'text-white'));
+
+            const targetPanel = document.getElementById(`view-${viewId}`);
+            if (targetPanel) targetPanel.classList.remove('hidden');
+
+            const targetNav = document.querySelector(`.nav-btn[data-view="${viewId}"]`);
+            if (targetNav) targetNav.classList.add('bg-slate-800', 'text-white');
+
+            const titles = {
+                dashboard: 'Dashboard Overview',
+                pos: 'Point of Sale Cashier',
+                products: 'Product Management',
+                inventory: 'Inventory & Stock Movements',
+                sales: 'Sales Transaction History',
+                soa: 'Statement of Account Records',
+                income: 'Financial Income Statement',
+                expenses: 'Expense Tracker',
+                reports: 'Analytics & Financial Reports',
+                users: 'System Users',
+                settings: 'System Settings'
+            };
+            document.getElementById('view-title').textContent = titles[viewId] || 'Dashboard';
+
+            // Refresh view-specific data
+            if (viewId === 'dashboard') renderDashboard();
+            if (viewId === 'pos') renderPosProducts();
+            if (viewId === 'products') renderProductsTable();
+            if (viewId === 'inventory') renderInventoryView();
+            if (viewId === 'sales') renderSalesHistory();
+            if (viewId === 'soa') renderStatementOfAccount();
+            if (viewId === 'income') renderIncomeStatement();
+            if (viewId === 'expenses') renderExpenses();
+            if (viewId === 'reports') renderReports();
         }
 
-        // Add to Cart
-        function addToCart(productId) {
-            const prod = state.products[productId];
-            const qtyToAdd = prod.qty;
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-ml-64');
+        }
 
-            const existingIndex = state.cart.findIndex(item => item.id === productId);
-            if (existingIndex > -1) {
-                state.cart[existingIndex].qty += qtyToAdd;
+        // --- INIT & SETTINGS ---
+        function initApp() {
+            lucide.createIcons();
+            document.querySelectorAll('.store-name-display').forEach(el => el.textContent = state.settings.storeName);
+            document.getElementById('setting-store-name').value = state.settings.storeName;
+            document.getElementById('setting-currency').value = state.settings.currency;
+        }
+
+        function saveSettings(e) {
+            e.preventDefault();
+            state.settings.storeName = document.getElementById('setting-store-name').value;
+            state.settings.currency = document.getElementById('setting-currency').value;
+            saveState();
+            initApp();
+            alert('Settings Saved Successfully!');
+        }
+
+        // --- POS & CART FUNCTIONS ---
+        function renderPosProducts() {
+            const search = document.getElementById('pos-search').value.toLowerCase();
+            const cat = document.getElementById('pos-category-filter').value;
+            const container = document.getElementById('pos-products-grid');
+            container.innerHTML = '';
+
+            const filtered = state.products.filter(p => {
+                const matchesSearch = p.name.toLowerCase().includes(search) || p.id.toLowerCase().includes(search);
+                const matchesCat = cat === 'ALL' || p.category === cat;
+                return matchesSearch && matchesCat;
+            });
+
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-2xl border text-left cursor-pointer transition-all flex flex-col justify-between ${p.stock > 0 ? 'bg-slate-50 border-slate-200 hover:border-primary-500 hover:shadow-md' : 'bg-slate-100 border-slate-200 opacity-60 cursor-not-allowed'}`;
+                card.onclick = () => { if (p.stock > 0) addToCart(p.id); };
+
+                card.innerHTML = `
+                    <div>
+                        <div class="text-3xl mb-2">${p.image || '📦'}</div>
+                        <h4 class="font-bold text-slate-800 text-sm leading-snug">${p.name}</h4>
+                        <span class="text-[10px] text-slate-400 font-semibold uppercase">${p.category}</span>
+                    </div>
+                    <div class="mt-3 flex items-center justify-between">
+                        <span class="font-bold text-primary-600 text-base">₱${p.price.toFixed(2)}</span>
+                        <span class="text-xs ${p.stock < 10 ? 'text-amber-600 font-bold' : 'text-slate-500'}">Stock: ${p.stock}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addToCart(prodId) {
+            const prod = state.products.find(p => p.id === prodId);
+            if (!prod) return;
+
+            const existing = state.cart.find(c => c.id === prodId);
+            if (existing) {
+                if (existing.qty + 1 > prod.stock) {
+                    alert('Cannot exceed available stock!');
+                    return;
+                }
+                existing.qty++;
             } else {
-                state.cart.push({
-                    id: productId,
-                    name: prod.name,
-                    price: prod.price,
-                    capital: prod.capital,
-                    targetRev: prod.targetRev,
-                    qty: qtyToAdd
-                });
+                state.cart.push({ id: prod.id, name: prod.name, price: prod.price, cost: prod.cost, qty: 1 });
             }
-            updateCartUI();
+            renderCart();
         }
 
-        // Modify Item Quantity in Cart
-        function updateCartQty(productId, delta) {
-            const index = state.cart.findIndex(item => item.id === productId);
-            if (index > -1) {
-                state.cart[index].qty += delta;
-                if (state.cart[index].qty <= 0) {
-                    state.cart.splice(index, 1);
+        function updateCartQty(prodId, change) {
+            const item = state.cart.find(c => c.id === prodId);
+            const prod = state.products.find(p => p.id === prodId);
+
+            if (item) {
+                if (change > 0 && item.qty + change > prod.stock) {
+                    alert('Cannot exceed available stock!');
+                    return;
+                }
+                item.qty += change;
+                if (item.qty <= 0) {
+                    state.cart = state.cart.filter(c => c.id !== prodId);
                 }
             }
-            updateCartUI();
-        }
-
-        function removeFromCart(productId) {
-            state.cart = state.cart.filter(item => item.id !== productId);
-            updateCartUI();
+            renderCart();
         }
 
         function clearCart() {
             state.cart = [];
-            updateCartUI();
+            renderCart();
         }
 
-        // Calculate Cart Subtotal and Profit
-        function getCartTotals() {
+        function renderCart() {
+            const container = document.getElementById('pos-cart-items');
+            container.innerHTML = '';
+
             let subtotal = 0;
-            let estCapital = 0;
+
             state.cart.forEach(item => {
-                subtotal += item.price * item.qty;
-                // Pro-rata capital estimation per unit sold if needed, or total item cost proportion
-                // For simplicity, we calculate proportional capital based on standard product capital
-                let unitCapital = item.id === 'lumpia' ? (500 / 100) : (500 / 10); // e.g. 100 lumpia for 500, 10 fans for 500
-                estCapital += (item.id === 'lumpia' ? 5 : 50) * item.qty; 
-            });
-            let estProfit = subtotal - estCapital;
-            return { subtotal, estProfit };
-        }
+                const itemTotal = item.price * item.qty;
+                subtotal += itemTotal;
 
-        function updateCartUI() {
-            const container = document.getElementById('cart-items');
-            const btnCheckout = document.getElementById('btn-checkout');
-
-            if (state.cart.length === 0) {
-                container.innerHTML = `
-                    <div class="py-8 text-center text-slate-400 text-sm">
-                        <i class="fa-solid fa-cart-shopping text-3xl mb-2 block opacity-40"></i>
-                        Cart is empty. Select items to sell.
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-100 text-sm';
+                row.innerHTML = `
+                    <div class="flex-1">
+                        <h5 class="font-bold text-slate-800 text-xs">${item.name}</h5>
+                        <div class="text-xs text-slate-500">₱${item.price.toFixed(2)} x ${item.qty}</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center border border-slate-200 rounded-lg bg-white">
+                            <button onclick="updateCartQty('${item.id}', -1)" class="px-2 py-0.5 text-slate-600 hover:bg-slate-100">-</button>
+                            <span class="px-2 text-xs font-bold">${item.qty}</span>
+                            <button onclick="updateCartQty('${item.id}', 1)" class="px-2 py-0.5 text-slate-600 hover:bg-slate-100">+</button>
+                        </div>
+                        <span class="font-bold text-slate-800 text-xs w-16 text-right">₱${itemTotal.toFixed(2)}</span>
                     </div>
                 `;
-                btnCheckout.disabled = true;
-            } else {
-                container.innerHTML = state.cart.map(item => `
-                    <div class="py-3 flex justify-between items-center">
-                        <div class="space-y-0.5">
-                            <h5 class="font-bold text-slate-800 text-sm">${item.name}</h5>
-                            <p class="text-xs text-slate-400">₱${item.price} × ${item.qty}</p>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <span class="font-bold text-slate-800 text-sm">₱${item.price * item.qty}</span>
-                            <div class="flex items-center space-x-1 border border-slate-200 rounded-lg p-0.5 bg-slate-50">
-                                <button onclick="updateCartQty('${item.id}', -1)" class="w-6 h-6 flex items-center justify-center bg-white rounded shadow-xs text-xs font-bold">-</button>
-                                <span class="w-5 text-center text-xs font-semibold">${item.qty}</span>
-                                <button onclick="updateCartQty('${item.id}', 1)" class="w-6 h-6 flex items-center justify-center bg-white rounded shadow-xs text-xs font-bold">+</button>
-                            </div>
-                            <button onclick="removeFromCart('${item.id}')" class="text-slate-300 hover:text-rose-500 text-xs">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-                btnCheckout.disabled = false;
-            }
+                container.appendChild(row);
+            });
 
-            const { subtotal, estProfit } = getCartTotals();
-            document.getElementById('cart-subtotal').innerText = `₱${subtotal.toFixed(2)}`;
-            document.getElementById('cart-est-profit').innerText = `₱${estProfit.toFixed(2)}`;
-            document.getElementById('cart-total').innerText = `₱${subtotal.toFixed(2)}`;
-            calculateChange();
+            document.getElementById('pos-subtotal').textContent = `₱${subtotal.toFixed(2)}`;
+            document.getElementById('pos-total').textContent = `₱${subtotal.toFixed(2)}`;
+            calculatePosChange();
         }
 
-        function calculateChange() {
-            const { subtotal } = getCartTotals();
-            const cash = parseFloat(document.getElementById('cash-tendered').value) || 0;
-            const change = cash - subtotal;
-            const changeEl = document.getElementById('cash-change');
-            const btnCheckout = document.getElementById('btn-checkout');
+        function calculatePosChange() {
+            const total = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const cash = parseFloat(document.getElementById('pos-cash-input').value) || 0;
+            const change = cash - total;
 
-            if (change >= 0 && state.cart.length > 0) {
-                changeEl.innerText = `₱${change.toFixed(2)}`;
-                changeEl.className = "font-bold text-emerald-600";
-                btnCheckout.disabled = false;
-            } else {
-                changeEl.innerText = cash > 0 ? "Insufficient Cash" : "₱0.00";
-                changeEl.className = "font-bold text-rose-500";
-                if (cash < subtotal || state.cart.length === 0) {
-                    btnCheckout.disabled = true;
-                }
-            }
+            const changeEl = document.getElementById('pos-change');
+            changeEl.textContent = `₱${(change > 0 ? change : 0).toFixed(2)}`;
         }
 
-        let lastTransaction = null;
+        function processCheckout() {
+            if (state.cart.length === 0) {
+                alert('Cart is empty!');
+                return;
+            }
 
-        function openCheckoutModal() {
-            const { subtotal } = getCartTotals();
-            const cash = parseFloat(document.getElementById('cash-tendered').value) || 0;
-            const change = cash - subtotal;
+            const total = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const cash = parseFloat(document.getElementById('pos-cash-input').value) || 0;
 
-            if (cash < subtotal) return;
+            if (cash < total) {
+                alert('Insufficient cash payment!');
+                return;
+            }
 
-            // Record transaction
-            const tx = {
-                id: 'TX-' + Math.floor(1000 + Math.random() * 9000),
-                date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-                items: JSON.parse(JSON.stringify(state.cart)),
-                total: subtotal,
-                tendered: cash,
-                change: change
-            };
+            const txnId = 'TXN-' + Date.now().toString().slice(-6);
+            const dateStr = new Date().toLocaleString('en-PH');
+            const customerName = document.getElementById('pos-customer-name').value || 'Walk-in Customer';
 
-            state.transactions.unshift(tx);
-            lastTransaction = tx;
-
-            // Update stats
-            state.cart.forEach(item => {
-                if (item.id === 'lumpia') {
-                    state.stats.lumpiaSold += item.qty;
-                    state.stats.lumpiaRevenue += item.price * item.qty;
-                } else if (item.id === 'minifan') {
-                    state.stats.fanSold += item.qty;
-                    state.stats.fanRevenue += item.price * item.qty;
+            // Deduct Stock
+            state.cart.forEach(cartItem => {
+                const prod = state.products.find(p => p.id === cartItem.id);
+                if (prod) {
+                    prod.stock -= cartItem.qty;
+                    // Log movement
+                    state.movements.unshift({
+                        date: dateStr,
+                        productId: prod.id,
+                        productName: prod.name,
+                        type: 'SALE',
+                        qty: cartItem.qty
+                    });
                 }
             });
 
-            saveData();
+            // Record Transaction
+            const saleRecord = {
+                id: txnId,
+                date: dateStr,
+                customer: customerName,
+                items: [...state.cart],
+                subtotal: total,
+                total: total,
+                cash: cash,
+                change: cash - total,
+                cashier: state.currentUser.username
+            };
 
-            // Populate receipt modal
-            document.getElementById('receipt-date').innerText = new Date().toLocaleString();
-            document.getElementById('receipt-items-list').innerHTML = tx.items.map(i => `
-                <div class="flex justify-between">
-                    <span>${i.qty}x ${i.name} (@₱${i.price})</span>
-                    <span>₱${i.qty * i.price}</span>
-                </div>
-            `).join('');
-            document.getElementById('receipt-total').innerText = `₱${tx.total.toFixed(2)}`;
-            document.getElementById('receipt-tendered').innerText = `₱${tx.tendered.toFixed(2)}`;
-            document.getElementById('receipt-change').innerText = `₱${tx.change.toFixed(2)}`;
+            state.sales.unshift(saleRecord);
+            saveState();
+
+            // Show Receipt
+            showReceiptModal(saleRecord);
+
+            // Reset POS Form
+            state.cart = [];
+            document.getElementById('pos-cash-input').value = '';
+            document.getElementById('pos-customer-name').value = '';
+            renderCart();
+            renderPosProducts();
+        }
+
+        // --- RECEIPT MODAL ---
+        function showReceiptModal(sale) {
+            document.getElementById('receipt-id').textContent = `Txn ID: ${sale.id}`;
+            document.getElementById('receipt-date-time').textContent = `Date: ${sale.date}`;
+
+            const itemsContainer = document.getElementById('receipt-items-list');
+            itemsContainer.innerHTML = '';
+
+            sale.items.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'flex justify-between';
+                row.innerHTML = `
+                    <span>${item.name} x${item.qty}</span>
+                    <span>₱${(item.price * item.qty).toFixed(2)}</span>
+                `;
+                itemsContainer.appendChild(row);
+            });
+
+            document.getElementById('receipt-total-val').textContent = `₱${sale.total.toFixed(2)}`;
+            document.getElementById('receipt-cash-val').textContent = `₱${sale.cash.toFixed(2)}`;
+            document.getElementById('receipt-change-val').textContent = `₱${sale.change.toFixed(2)}`;
 
             document.getElementById('receipt-modal').classList.remove('hidden');
-
-            // Clear cart & cash input
-            state.cart = [];
-            document.getElementById('cash-tendered').value = '';
-            updateCartUI();
         }
 
         function closeReceiptModal() {
             document.getElementById('receipt-modal').classList.add('hidden');
         }
 
-        function printReceipt() {
-            window.print();
+        // --- PRODUCT MANAGEMENT ---
+        function renderProductsTable() {
+            const tbody = document.getElementById('products-table-body');
+            tbody.innerHTML = '';
+
+            state.products.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 border-b border-slate-100';
+                tr.innerHTML = `
+                    <td class="p-4 font-semibold text-slate-700">${p.id}</td>
+                    <td class="p-4 flex items-center gap-2">
+                        <span>${p.image || '📦'}</span>
+                        <span class="font-bold text-slate-800">${p.name}</span>
+                    </td>
+                    <td class="p-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">${p.category}</span></td>
+                    <td class="p-4 text-slate-600">₱${p.cost.toFixed(2)}</td>
+                    <td class="p-4 font-bold text-primary-600">₱${p.price.toFixed(2)}</td>
+                    <td class="p-4 font-semibold ${p.stock < 10 ? 'text-amber-600' : 'text-slate-800'}">${p.stock}</td>
+                    <td class="p-4 text-right space-x-2">
+                        <button onclick="editProduct('${p.id}')" class="text-xs text-primary-600 hover:text-primary-800 font-semibold">Edit</button>
+                        <button onclick="deleteProduct('${p.id}')" class="text-xs text-rose-600 hover:text-rose-800 font-semibold">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        // Render Dashboard Data
-        function renderDashboard() {
-            let totalRev = state.stats.lumpiaRevenue + state.stats.fanRevenue;
-            let totalCapital = 1000; // 500 Lumpia + 500 Fan
-            let netProfit = totalRev - totalCapital;
-
-            document.getElementById('dash-total-revenue').innerText = `₱${totalRev.toFixed(2)}`;
-            document.getElementById('dash-net-profit').innerText = `₱${netProfit.toFixed(2)}`;
-            document.getElementById('dash-total-tx').innerText = state.transactions.length;
-
-            // Lumpia Stats
-            document.getElementById('stat-lumpia-qty').innerText = `${state.stats.lumpiaSold} pcs`;
-            document.getElementById('stat-lumpia-rev').innerText = `₱${state.stats.lumpiaRevenue.toFixed(2)}`;
-            let lumpiaProfit = state.stats.lumpiaRevenue - 500;
-            const lumpiaProfitEl = document.getElementById('stat-lumpia-profit');
-            lumpiaProfitEl.innerText = `₱${lumpiaProfit.toFixed(2)}`;
-            lumpiaProfitEl.className = `font-bold ${lumpiaProfit >= 0 ? 'text-emerald-700' : 'text-rose-600'}`;
-
-            // Mini Fan Stats
-            document.getElementById('stat-fan-qty').innerText = `${state.stats.fanSold} pcs`;
-            document.getElementById('stat-fan-rev').innerText = `₱${state.stats.fanRevenue.toFixed(2)}`;
-            let fanProfit = state.stats.fanRevenue - 500;
-            const fanProfitEl = document.getElementById('stat-fan-profit');
-            fanProfitEl.innerText = `₱${fanProfit.toFixed(2)}`;
-            fanProfitEl.className = `font-bold ${fanProfit >= 0 ? 'text-emerald-700' : 'text-rose-600'}`;
-
-            // Transaction Log Table
-            const tbody = document.getElementById('transaction-log-body');
-            if (state.transactions.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">No transactions recorded yet.</td></tr>`;
+        function openProductModal(prodId = null) {
+            document.getElementById('product-form').reset();
+            if (prodId) {
+                const prod = state.products.find(p => p.id === prodId);
+                document.getElementById('product-modal-title').textContent = 'Edit Product';
+                document.getElementById('prod-id').value = prod.id;
+                document.getElementById('prod-name').value = prod.name;
+                document.getElementById('prod-category').value = prod.category;
+                document.getElementById('prod-cost').value = prod.cost;
+                document.getElementById('prod-price').value = prod.price;
+                document.getElementById('prod-stock').value = prod.stock;
             } else {
-                tbody.innerHTML = state.transactions.map(tx => `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3 font-medium text-slate-800">${tx.id}</td>
-                        <td class="p-3 text-slate-500">${tx.date}</td>
-                        <td class="p-3 text-slate-600">${tx.items.map(i => `${i.qty}x ${i.name}`).join(', ')}</td>
-                        <td class="p-3 font-bold text-emerald-700">₱${tx.total.toFixed(2)}</td>
-                        <td class="p-3">
-                            <button onclick="viewTxDetail('${tx.id}')" class="text-emerald-600 hover:text-emerald-800 text-xs font-semibold bg-emerald-50 px-2.5 py-1 rounded-lg">View</button>
-                        </td>
-                    </tr>
-                `).join('');
+                document.getElementById('product-modal-title').textContent = 'Add Product';
+                document.getElementById('prod-id').value = '';
+            }
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        function saveProduct(e) {
+            e.preventDefault();
+            const id = document.getElementById('prod-id').value;
+            const name = document.getElementById('prod-name').value;
+            const category = document.getElementById('prod-category').value;
+            const cost = parseFloat(document.getElementById('prod-cost').value);
+            const price = parseFloat(document.getElementById('prod-price').value);
+            const stock = parseInt(document.getElementById('prod-stock').value);
+
+            if (id) {
+                const prod = state.products.find(p => p.id === id);
+                if (prod) {
+                    prod.name = name;
+                    prod.category = category;
+                    prod.cost = cost;
+                    prod.price = price;
+                    prod.stock = stock;
+                }
+            } else {
+                const newId = 'PROD-' + String(state.products.length + 1).padStart(3, '0');
+                state.products.push({ id: newId, name, category, cost, price, stock, image: category === 'Food' ? '🥟' : '⚙️' });
+            }
+
+            saveState();
+            closeProductModal();
+            renderProductsTable();
+        }
+
+        function editProduct(id) {
+            openProductModal(id);
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                state.products = state.products.filter(p => p.id !== id);
+                saveState();
+                renderProductsTable();
             }
         }
 
-        function viewTxDetail(txId) {
-            const tx = state.transactions.find(t => t.id === txId);
-            if (!tx) return;
-            
-            document.getElementById('receipt-date').innerText = tx.id + " - " + tx.date;
-            document.getElementById('receipt-items-list').innerHTML = tx.items.map(i => `
-                <div class="flex justify-between">
-                    <span>${i.qty}x ${i.name} (@₱${i.price})</span>
-                    <span>₱${i.qty * i.price}</span>
-                </div>
-            `).join('');
-            document.getElementById('receipt-total').innerText = `₱${tx.total.toFixed(2)}`;
-            document.getElementById('receipt-tendered').innerText = `₱${tx.tendered.toFixed(2)}`;
-            document.getElementById('receipt-change').innerText = `₱${tx.change.toFixed(2)}`;
+        // --- INVENTORY MANAGEMENT ---
+        function renderInventoryView() {
+            let totalStock = 0, lowStock = 0, outStock = 0;
+            const selectEl = document.getElementById('adj-product-id');
+            selectEl.innerHTML = '';
 
-            document.getElementById('receipt-modal').classList.remove('hidden');
+            state.products.forEach(p => {
+                totalStock += p.stock;
+                if (p.stock === 0) outStock++;
+                else if (p.stock < 10) lowStock++;
+
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = `${p.name} (Current Stock: ${p.stock})`;
+                selectEl.appendChild(opt);
+            });
+
+            document.getElementById('inv-total-stock').textContent = totalStock;
+            document.getElementById('inv-low-stock-count').textContent = lowStock;
+            document.getElementById('inv-out-stock-count').textContent = outStock;
+
+            // Movements table
+            const tbody = document.getElementById('inventory-movements-tbody');
+            tbody.innerHTML = '';
+            state.movements.slice(0, 15).forEach(m => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-slate-100 text-xs';
+                tr.innerHTML = `
+                    <td class="p-3 text-slate-500">${m.date}</td>
+                    <td class="p-3 font-semibold text-slate-800">${m.productName}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded font-bold ${m.type === 'RESTOCK' || m.type === 'IN' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${m.type}</span></td>
+                    <td class="p-3 font-bold">${m.qty}</td>
+                    <td class="p-3 text-slate-500">${m.type === 'SALE' ? 'Customer Purchase' : 'Manual Adjustment'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        function resetData() {
-            if (confirm("Are you sure you want to reset all sales data and transaction logs?")) {
-                localStorage.removeItem('kiosk_pos_state');
-                location.reload();
+        function handleStockAdjustment(e) {
+            e.preventDefault();
+            const prodId = document.getElementById('adj-product-id').value;
+            const type = document.getElementById('adj-type').value;
+            const qty = parseInt(document.getElementById('adj-qty').value);
+
+            const prod = state.products.find(p => p.id === prodId);
+            if (prod) {
+                if (type === 'IN') {
+                    prod.stock += qty;
+                } else {
+                    if (prod.stock - qty < 0) {
+                        alert('Cannot reduce stock below zero!');
+                        return;
+                    }
+                    prod.stock -= qty;
+                }
+
+                state.movements.unshift({
+                    date: new Date().toLocaleString('en-PH'),
+                    productId: prod.id,
+                    productName: prod.name,
+                    type: type === 'IN' ? 'RESTOCK' : 'OUT',
+                    qty: qty
+                });
+
+                saveState();
+                renderInventoryView();
+                alert('Stock adjusted successfully!');
             }
         }
 
-        // Initialize on load
-        window.onload = function() {
-            loadData();
-        };
+        // --- EXPENSES MANAGEMENT ---
+        function handleAddExpense(e) {
+            e.preventDefault();
+            const desc = document.getElementById('exp-desc').value;
+            const category = document.getElementById('exp-category').value;
+            const amount = parseFloat(document.getElementById('exp-amount').value);
+
+            state.expenses.unshift({
+                id: 'EXP-' + Date.now().toString().slice(-4),
+                date: new Date().toLocaleString('en-PH'),
+                desc,
+                category,
+                amount
+            });
+
+            saveState();
+            document.getElementById('expense-form').reset();
+            renderExpenses();
+        }
+
+        function renderExpenses() {
+            const tbody = document.getElementById('expenses-table-body');
+            tbody.innerHTML = '';
+            let total = 0;
+
+            state.expenses.forEach(exp => {
+                total += exp.amount;
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-slate-100';
+                tr.innerHTML = `
+                    <td class="p-4 text-xs text-slate-500">${exp.date}</td>
+                    <td class="p-4 font-semibold text-slate-800">${exp.desc}</td>
+                    <td class="p-4"><span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs">${exp.category}</span></td>
+                    <td class="p-4 font-bold text-rose-600">₱${exp.amount.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('total-expenses-badge').textContent = `Total: ₱${total.toFixed(2)}`;
+        }
+
+        // --- SALES HISTORY & STATEMENT OF ACCOUNT ---
+        function renderSalesHistory() {
+            const tbody = document.getElementById('sales-table-body');
+            tbody.innerHTML = '';
+
+            const search = document.getElementById('sales-search').value.toLowerCase();
+            const filtered = state.sales.filter(s => s.id.toLowerCase().includes(search) || s.customer.toLowerCase().includes(search));
+
+            filtered.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 border-b border-slate-100';
+                tr.innerHTML = `
+                    <td class="p-4 font-bold text-slate-700">${s.id}</td>
+                    <td class="p-4 text-xs text-slate-500">${s.date}</td>
+                    <td class="p-4 text-xs">${s.items.map(i => `${i.name} (x${i.qty})`).join(', ')}</td>
+                    <td class="p-4 font-bold text-primary-600">₱${s.total.toFixed(2)}</td>
+                    <td class="p-4 text-slate-600">₱${s.cash.toFixed(2)}</td>
+                    <td class="p-4 text-slate-600">₱${s.change.toFixed(2)}</td>
+                    <td class="p-4 text-right">
+                        <button onclick="viewSaleReceipt('${s.id}')" class="text-xs text-primary-600 font-semibold hover:underline">View Receipt</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function viewSaleReceipt(saleId) {
+            const sale = state.sales.find(s => s.id === saleId);
+            if (sale) showReceiptModal(sale);
+        }
+
+        function renderStatementOfAccount() {
+            const tbody = document.getElementById('soa-table-body');
+            tbody.innerHTML = '';
+
+            state.sales.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 border-b border-slate-100';
+                tr.innerHTML = `
+                    <td class="p-4 font-bold text-slate-700">${s.id}</td>
+                    <td class="p-4 text-xs text-slate-500">${s.date}</td>
+                    <td class="p-4 font-semibold text-slate-800">${s.customer}</td>
+                    <td class="p-4 font-bold">₱${s.total.toFixed(2)}</td>
+                    <td class="p-4 text-emerald-600 font-medium">₱${s.cash.toFixed(2)}</td>
+                    <td class="p-4"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-xs font-bold">PAID</span></td>
+                    <td class="p-4 text-right">
+                        <button onclick="viewSaleReceipt('${s.id}')" class="text-xs text-slate-600 hover:text-slate-900 font-semibold">Print Statement</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- CSV EXPORTS ---
+        function exportSalesCSV() {
+            let csv = 'Transaction ID,Date,Customer,Total Amount,Cash,Change\n';
+            state.sales.forEach(s => {
+                csv += `"${s.id}","${s.date}","${s.customer}",${s.total},${s.cash},${s.change}\n`;
+            });
+            downloadCSV(csv, 'sales_history.csv');
+        }
+
+        function exportSoaCSV() {
+            let csv = 'Txn ID,Date,Customer,Subtotal,Paid,Status\n';
+            state.sales.forEach(s => {
+                csv += `"${s.id}","${s.date}","${s.customer}",${s.total},${s.cash},"PAID"\n`;
+            });
+            downloadCSV(csv, 'statement_of_account.csv');
+        }
+
+        function downloadCSV(csv, filename) {
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', filename);
+            a.click();
+        }
+
+        // --- FINANCIAL INCOME STATEMENT ---
+        function renderIncomeStatement() {
+            const totalGrossSales = state.sales.reduce((sum, s) => sum + s.total, 0);
+            const netSales = totalGrossSales;
+
+            // Calculate total COGS based on sold items cost
+            let totalCogs = 0;
+            state.sales.forEach(s => {
+                s.items.forEach(i => {
+                    totalCogs += (i.cost || 0) * i.qty;
+                });
+            });
+
+            const currentEndingInvCost = state.products.reduce((sum, p) => sum + (p.cost * p.stock), 0);
+            const begInvCost = currentEndingInvCost + totalCogs; // Simplified valuation estimation
+
+            const grossProfit = netSales - totalCogs;
+            const totalExpenses = state.expenses.reduce((sum, e) => sum + e.amount, 0);
+            const netIncome = grossProfit - totalExpenses;
+
+            document.getElementById('inc-gross-sales').textContent = `₱${totalGrossSales.toFixed(2)}`;
+            document.getElementById('inc-net-sales').textContent = `₱${netSales.toFixed(2)}`;
+            document.getElementById('inc-beg-inv').textContent = `₱${begInvCost.toFixed(2)}`;
+            document.getElementById('inc-purchases').textContent = `₱0.00`;
+            document.getElementById('inc-end-inv').textContent = `(₱${currentEndingInvCost.toFixed(2)})`;
+            document.getElementById('inc-cogs').textContent = `₱${totalCogs.toFixed(2)}`;
+            document.getElementById('inc-gross-profit').textContent = `₱${grossProfit.toFixed(2)}`;
+            document.getElementById('inc-expenses').textContent = `₱${totalExpenses.toFixed(2)}`;
+            document.getElementById('inc-net-income').textContent = `₱${netIncome.toFixed(2)}`;
+        }
+
+        // --- DASHBOARD & ANALYTICS CHARTS ---
+        function renderDashboard() {
+            const totalRevenue = state.sales.reduce((sum, s) => sum + s.total, 0);
+
+            let totalCogs = 0;
+            state.sales.forEach(s => {
+                s.items.forEach(i => { totalCogs += (i.cost || 0) * i.qty; });
+            });
+
+            const grossProfit = totalRevenue - totalCogs;
+            const lowStockCount = state.products.filter(p => p.stock < 10).length;
+
+            document.getElementById('kpi-today-sales').textContent = `₱${totalRevenue.toFixed(2)}`;
+            document.getElementById('kpi-total-revenue').textContent = `₱${totalRevenue.toFixed(2)}`;
+            document.getElementById('kpi-total-transactions').textContent = state.sales.length;
+            document.getElementById('kpi-low-stock').textContent = lowStockCount;
+            document.getElementById('kpi-cogs').textContent = `₱${totalCogs.toFixed(2)}`;
+            document.getElementById('kpi-gross-profit').textContent = `₱${grossProfit.toFixed(2)}`;
+
+            initCharts();
+        }
+
+        function initCharts() {
+            // Chart 1: Daily Sales Trend
+            const ctxDaily = document.getElementById('chart-daily-sales').getContext('2d');
+            if (charts.daily) charts.daily.destroy();
+
+            const salesLabels = state.sales.slice(0, 7).map(s => s.id).reverse();
+            const salesData = state.sales.slice(0, 7).map(s => s.total).reverse();
+
+            charts.daily = new Chart(ctxDaily, {
+                type: 'line',
+                data: {
+                    labels: salesLabels.length > 0 ? salesLabels : ['No Data'],
+                    datasets: [{
+                        label: 'Sales Revenue (₱)',
+                        data: salesData.length > 0 ? salesData : [0],
+                        borderColor: '#0284c7',
+                        backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Chart 2: Top Products Sold
+            const ctxTop = document.getElementById('chart-top-products').getContext('2d');
+            if (charts.top) charts.top.destroy();
+
+            const prodQtyMap = {};
+            state.sales.forEach(s => {
+                s.items.forEach(i => {
+                    prodQtyMap[i.name] = (prodQtyMap[i.name] || 0) + i.qty;
+                });
+            });
+
+            charts.top = new Chart(ctxTop, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(prodQtyMap).length > 0 ? Object.keys(prodQtyMap) : ['No Sales'],
+                    datasets: [{
+                        data: Object.values(prodQtyMap).length > 0 ? Object.values(prodQtyMap) : [1],
+                        backgroundColor: ['#0284c7', '#10b981', '#f59e0b', '#ec4899']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function renderReports() {
+            const ctxRevProfit = document.getElementById('chart-rev-profit').getContext('2d');
+            if (charts.revProfit) charts.revProfit.destroy();
+
+            const totalRev = state.sales.reduce((sum, s) => sum + s.total, 0);
+            let totalCogs = 0;
+            state.sales.forEach(s => { s.items.forEach(i => { totalCogs += (i.cost || 0) * i.qty; }); });
+            const totalExp = state.expenses.reduce((sum, e) => sum + e.amount, 0);
+            const netProfit = totalRev - totalCogs - totalExp;
+
+            charts.revProfit = new Chart(ctxRevProfit, {
+                type: 'bar',
+                data: {
+                    labels: ['Revenue', 'COGS', 'Expenses', 'Net Profit'],
+                    datasets: [{
+                        label: 'Financial Breakdown (₱)',
+                        data: [totalRev, totalCogs, totalExp, netProfit],
+                        backgroundColor: ['#0284c7', '#64748b', '#f43f5e', '#10b981']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            const ctxCategory = document.getElementById('chart-category-sales').getContext('2d');
+            if (charts.category) charts.category.destroy();
+
+            const catMap = {};
+            state.sales.forEach(s => {
+                s.items.forEach(i => {
+                    const prod = state.products.find(p => p.id === i.id);
+                    const cat = prod ? prod.category : 'Food';
+                    catMap[cat] = (catMap[cat] || 0) + (i.price * i.qty);
+                });
+            });
+
+            charts.category = new Chart(ctxCategory, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(catMap).length > 0 ? Object.keys(catMap) : ['Food', 'Electronics'],
+                    datasets: [{
+                        data: Object.values(catMap).length > 0 ? Object.values(catMap) : [0, 0],
+                        backgroundColor: ['#10b981', '#0284c7']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
     </script>
 </body>
 </html>
